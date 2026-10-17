@@ -11,9 +11,14 @@ import {
   Columns,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   ArrowUpDown,
   Download,
-  AlertTriangle
+  Plus,
+  Tag,
+  Calendar,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
 
@@ -25,6 +30,9 @@ export default function ClaimsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [ownerFilter, setOwnerFilter] = useState('all');
   const [payerFilter, setPayerFilter] = useState('all');
+  const [tagFilter, setTagFilter] = useState('all');
+  const [taskCategory, setTaskCategory] = useState('all');
+  const [taskType, setTaskType] = useState('all');
   const [page, setPage] = useState(1);
   const pageSize = 25;
 
@@ -47,6 +55,7 @@ export default function ClaimsPage() {
     responsibility: true
   });
   const [isColMenuOpen, setIsColMenuOpen] = useState(false);
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
 
   // Filtered & Sorted claims
   const filteredClaims = useMemo(() => {
@@ -98,9 +107,6 @@ export default function ClaimsPage() {
   const totalPages = Math.ceil(filteredClaims.length / pageSize);
   const paginated = filteredClaims.slice((page - 1) * pageSize, page * pageSize);
 
-  const totalFilteredBilled = filteredClaims.reduce((acc, c) => acc + c.billed, 0);
-  const totalFilteredBalance = filteredClaims.reduce((acc, c) => acc + c.claimBalance, 0);
-
   const toggleSort = (field: typeof sortField) => {
     if (sortField === field) setSortAsc(!sortAsc);
     else {
@@ -109,47 +115,52 @@ export default function ClaimsPage() {
     }
   };
 
+  const handleExport = () => {
+    alert(`Exporting ${filteredClaims.length} claims as CSV format.`);
+  };
+
   return (
-    <div className="p-4 sm:p-6 space-y-4 max-w-7xl mx-auto flex flex-col h-full">
-      {/* Header */}
+    <div className="p-4 sm:p-6 lg:p-7 space-y-4 max-w-[1600px] mx-auto flex flex-col h-full text-foreground">
+      {/* Top Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <FileText className="size-6 text-emerald-600 dark:text-emerald-400" />
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+          <div className="flex items-center gap-2.5">
+            <FileText className="size-5 text-primary" />
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               Claims
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5">
-            Status of every claim Taiga is working on across clearinghouses and payers.
+          <p className="text-xs text-muted-foreground mt-1">
+            Read-only view of claims managed by the operations team
           </p>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-neutral-500">
-          <div className="hidden md:flex items-center gap-3 px-3 py-1.5 bg-white dark:bg-neutral-850 rounded-lg border border-neutral-200 dark:border-neutral-800 shadow-2xs">
-            <span>
-              Total Billed:{' '}
-              <strong className="text-neutral-900 dark:text-neutral-100 font-bold">
-                ${totalFilteredBilled.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </strong>
-            </span>
-            <span className="text-neutral-300">|</span>
-            <span>
-              In Balance:{' '}
-              <strong className="text-rose-600 dark:text-rose-400 font-bold">
-                ${totalFilteredBalance.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-              </strong>
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/80 bg-secondary/60 hover:bg-secondary text-xs font-medium text-foreground transition-colors shadow-xs"
+          >
+            <Download className="size-3.5 text-muted-foreground" />
+            <span>Export</span>
+            <ChevronDown className="size-3 text-muted-foreground" />
+          </button>
+          <button
+            onClick={() => router.push('/claims/clm-1002')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-xs transition-colors"
+          >
+            <Plus className="size-3.5" />
+            <span>+ New claim</span>
+          </button>
         </div>
       </div>
 
-      {/* Filter and Control Bar */}
-      <div className="bg-white dark:bg-neutral-850 p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xs flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[280px]">
-          {/* Search */}
-          <div className="relative min-w-[200px] flex-1 max-w-sm">
-            <Search className="size-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+      {/* 2-Row Dense Filter and Control Bar */}
+      <div className="bg-card p-3 rounded-xl border border-border/80 shadow-xs space-y-2.5 text-xs">
+        {/* Row 1: Search + 7 Filters */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Main Search Input */}
+          <div className="relative min-w-[220px] flex-1 max-w-sm">
+            <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               value={search}
@@ -157,115 +168,211 @@ export default function ClaimsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Filter by patient, ID, or MRN..."
-              className="w-full pl-8 pr-3 py-1.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs"
+              placeholder="Search claims, patients, IDs..."
+              className="w-full pl-8 pr-3 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 
-          {/* Status filter */}
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-medium"
-          >
-            <option value="all">All statuses</option>
-            <option value="paid">Paid & Finalized</option>
-            <option value="denied">Denied (Active appeal)</option>
-            <option value="submitted_to_payer">Submitted to Payer</option>
-            <option value="awaiting_info">Awaiting info / Clinic Action</option>
-            <option value="coded">Coded</option>
-            <option value="rejected">Rejected (Clearinghouse)</option>
-            <option value="era_received">ERA Received</option>
-            <option value="paid_incorrectly">Underpaid</option>
-          </select>
-
-          {/* Owner filter */}
-          <select
-            value={ownerFilter}
-            onChange={(e) => {
-              setOwnerFilter(e.target.value);
-              setPage(1);
-            }}
-            className="px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-medium"
-          >
-            <option value="all">Any owner</option>
-            <option value="clinic">Clinic Action</option>
-            <option value="taiga">Taiga Review</option>
-            <option value="payer">Payer</option>
-            <option value="none">None (Settled)</option>
-          </select>
-
-          {/* Payer filter */}
+          {/* 1. Primary Payer Name */}
           <select
             value={payerFilter}
             onChange={(e) => {
               setPayerFilter(e.target.value);
               setPage(1);
             }}
-            className="px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-medium hidden sm:block"
+            className="px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs font-medium text-foreground cursor-pointer focus:outline-none"
           >
-            <option value="all">All payers</option>
+            <option value="all">Primary payer name</option>
             <option value="Aetna">Aetna</option>
             <option value="Blue Cross Blue Shield">Blue Cross Blue Shield</option>
             <option value="Cigna">Cigna</option>
             <option value="UnitedHealthcare">UnitedHealthcare</option>
             <option value="Oregon Health Plan">Oregon Health Plan</option>
           </select>
+
+          {/* 2. All Statuses */}
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+            className="px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs font-medium text-foreground cursor-pointer focus:outline-none"
+          >
+            <option value="all">All statuses</option>
+            <option value="paid">Paid</option>
+            <option value="denied">Denied</option>
+            <option value="submitted_to_payer">Submitted</option>
+            <option value="awaiting_info">Awaiting info</option>
+            <option value="era_received">ERA received</option>
+            <option value="coded">Coded</option>
+            <option value="rejected">Rejected</option>
+          </select>
+
+          {/* 3. Tags */}
+          <select
+            value={tagFilter}
+            onChange={(e) => setTagFilter(e.target.value)}
+            className="px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs font-medium text-foreground cursor-pointer focus:outline-none"
+          >
+            <option value="all">Tags</option>
+            <option value="high_dollar">High Dollar (&gt;$500)</option>
+            <option value="urgent">Urgent Appeal</option>
+            <option value="telehealth">Telehealth</option>
+          </select>
+
+          {/* 4. Service Date */}
+          <button
+            onClick={() => alert('Date Range Picker: Oct 01, 2026 – Oct 17, 2026')}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs font-medium text-foreground hover:bg-secondary/50 cursor-pointer"
+          >
+            <Calendar className="size-3 text-muted-foreground" />
+            <span>Service date</span>
+          </button>
+
+          {/* 5. Any Owner */}
+          <select
+            value={ownerFilter}
+            onChange={(e) => {
+              setOwnerFilter(e.target.value);
+              setPage(1);
+            }}
+            className="px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs font-medium text-foreground cursor-pointer focus:outline-none"
+          >
+            <option value="all">Any owner</option>
+            <option value="clinic">Clinic Action</option>
+            <option value="taiga">Taiga Ops</option>
+            <option value="payer">Payer</option>
+          </select>
+
+          {/* 6. Task Categories */}
+          <select
+            value={taskCategory}
+            onChange={(e) => setTaskCategory(e.target.value)}
+            className="px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs font-medium text-foreground cursor-pointer focus:outline-none hidden md:block"
+          >
+            <option value="all">Task categories</option>
+            <option value="denials">Denials & Appeals</option>
+            <option value="missing_info">Missing Documents</option>
+            <option value="coding">Coding & Modifiers</option>
+          </select>
+
+          {/* 7. Task Types */}
+          <select
+            value={taskType}
+            onChange={(e) => setTaskType(e.target.value)}
+            className="px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs font-medium text-foreground cursor-pointer focus:outline-none hidden lg:block"
+          >
+            <option value="all">Task types</option>
+            <option value="carc_16">Referral Required</option>
+            <option value="carc_4">Modifier Review</option>
+            <option value="prior_auth">Prior Auth Sync</option>
+          </select>
+
+          {/* + Add Filter */}
+          <button
+            onClick={() => alert('Additional filters: Provider NPI, Facility, POS, ERA Batch ID.')}
+            className="px-2 py-1.5 rounded-lg border border-dashed border-border text-muted-foreground hover:text-foreground text-xs"
+          >
+            + Add
+          </button>
         </div>
 
-        {/* Right side tools */}
-        <div className="flex items-center gap-2">
-          {/* Columns menu */}
-          <div className="relative">
-            <button
-              onClick={() => setIsColMenuOpen(!isColMenuOpen)}
-              className="px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 rounded-lg text-xs font-medium flex items-center gap-1.5"
-            >
-              <Columns className="size-3.5 text-neutral-500" />
-              <span>Columns</span>
-            </button>
-            {isColMenuOpen && (
-              <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-neutral-850 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-xl p-2 z-30 space-y-1 text-xs">
-                {Object.keys(visibleCols).map((col) => (
-                  <label key={col} className="flex items-center gap-2 px-2 py-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={visibleCols[col as keyof typeof visibleCols]}
-                      onChange={(e) =>
-                        setVisibleCols({
-                          ...visibleCols,
-                          [col]: e.target.checked
-                        })
-                      }
-                      className="rounded"
-                    />
-                    <span className="capitalize">{col.replace(/([A-Z])/g, ' $1')}</span>
-                  </label>
-                ))}
-              </div>
-            )}
+        {/* Row 2: Sort, Columns, Total Count */}
+        <div className="flex items-center justify-between pt-2 border-t border-border/50">
+          <div className="flex items-center gap-2">
+            {/* Default Sort */}
+            <div className="relative">
+              <button
+                onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-secondary/50 hover:bg-secondary border border-border/80 rounded-lg text-xs font-medium text-foreground"
+              >
+                <span>Default sort</span>
+                <ChevronDown className="size-3 text-muted-foreground" />
+              </button>
+              {isSortMenuOpen && (
+                <div className="absolute left-0 mt-1 w-44 bg-card border border-border rounded-xl shadow-xl p-1.5 z-30 text-xs space-y-1">
+                  <button
+                    onClick={() => {
+                      setSortField('serviceDate');
+                      setIsSortMenuOpen(false);
+                    }}
+                    className="w-full text-left px-2 py-1 rounded hover:bg-secondary text-foreground"
+                  >
+                    Service Date (Newest)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSortField('billed');
+                      setIsSortMenuOpen(false);
+                    }}
+                    className="w-full text-left px-2 py-1 rounded hover:bg-secondary text-foreground"
+                  >
+                    Billed Amount (Highest)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSortField('claimBalance');
+                      setIsSortMenuOpen(false);
+                    }}
+                    className="w-full text-left px-2 py-1 rounded hover:bg-secondary text-foreground"
+                  >
+                    Claim Balance (Highest)
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Columns Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setIsColMenuOpen(!isColMenuOpen)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-secondary/50 hover:bg-secondary border border-border/80 rounded-lg text-xs font-medium text-foreground"
+              >
+                <Columns className="size-3 text-muted-foreground" />
+                <span>Columns</span>
+                <ChevronDown className="size-3 text-muted-foreground" />
+              </button>
+              {isColMenuOpen && (
+                <div className="absolute left-0 mt-1 w-52 bg-card border border-border rounded-xl shadow-xl p-2 z-30 space-y-1 text-xs">
+                  {Object.keys(visibleCols).map((col) => (
+                    <label key={col} className="flex items-center gap-2 px-2 py-1 hover:bg-secondary rounded cursor-pointer text-foreground">
+                      <input
+                        type="checkbox"
+                        checked={visibleCols[col as keyof typeof visibleCols]}
+                        onChange={(e) =>
+                          setVisibleCols({
+                            ...visibleCols,
+                            [col]: e.target.checked
+                          })
+                        }
+                        className="rounded accent-primary"
+                      />
+                      <span className="capitalize">{col.replace(/([A-Z])/g, ' $1')}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          <span className="text-neutral-400 font-mono text-[11px]">
+          <span className="text-muted-foreground font-mono text-[11px]">
             {filteredClaims.length.toLocaleString()} claims
           </span>
         </div>
       </div>
 
       {/* Dense Table Container */}
-      <div className="bg-white dark:bg-neutral-850 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden shadow-xs flex-1 flex flex-col justify-between">
+      <div className="bg-card rounded-xl border border-border/80 overflow-hidden shadow-xs flex-1 flex flex-col justify-between">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-neutral-50 dark:bg-neutral-800/60 border-b border-neutral-200 dark:border-neutral-700 text-neutral-500 font-medium select-none">
+            <thead className="bg-secondary/40 border-b border-border text-muted-foreground font-medium select-none">
               <tr>
-                <th className="py-2.5 px-3 whitespace-nowrap">Patient name</th>
+                <th className="py-2.5 px-3 whitespace-nowrap font-semibold">Patient name</th>
                 {visibleCols.serviceDate && (
                   <th
                     onClick={() => toggleSort('serviceDate')}
-                    className="py-2.5 px-3 cursor-pointer hover:text-neutral-800 dark:hover:text-neutral-200 whitespace-nowrap"
+                    className="py-2.5 px-3 cursor-pointer hover:text-foreground whitespace-nowrap font-semibold"
                   >
                     <div className="flex items-center gap-1">
                       <span>Service date</span>
@@ -273,14 +380,14 @@ export default function ClaimsPage() {
                     </div>
                   </th>
                 )}
-                {visibleCols.lastUpdated && <th className="py-2.5 px-3 whitespace-nowrap">Last updated</th>}
-                {visibleCols.payer && <th className="py-2.5 px-3 whitespace-nowrap">Primary payer</th>}
-                {visibleCols.payerId && <th className="py-2.5 px-3 whitespace-nowrap">Payer ID</th>}
-                {visibleCols.status && <th className="py-2.5 px-3 whitespace-nowrap">Status</th>}
+                {visibleCols.lastUpdated && <th className="py-2.5 px-3 whitespace-nowrap font-semibold">Last updated</th>}
+                {visibleCols.payer && <th className="py-2.5 px-3 whitespace-nowrap font-semibold">Primary payer</th>}
+                {visibleCols.payerId && <th className="py-2.5 px-3 whitespace-nowrap font-semibold">Payer ID</th>}
+                {visibleCols.status && <th className="py-2.5 px-3 whitespace-nowrap font-semibold">Status</th>}
                 {visibleCols.billed && (
                   <th
                     onClick={() => toggleSort('billed')}
-                    className="py-2.5 px-3 text-right cursor-pointer hover:text-neutral-800 whitespace-nowrap"
+                    className="py-2.5 px-3 text-right cursor-pointer hover:text-foreground whitespace-nowrap font-semibold"
                   >
                     <div className="flex items-center justify-end gap-1">
                       <span>Billed</span>
@@ -288,14 +395,14 @@ export default function ClaimsPage() {
                     </div>
                   </th>
                 )}
-                {visibleCols.allowed && <th className="py-2.5 px-3 text-right whitespace-nowrap">Allowed</th>}
-                {visibleCols.insBal && <th className="py-2.5 px-3 text-right whitespace-nowrap">Ins. balance</th>}
-                {visibleCols.patResp && <th className="py-2.5 px-3 text-right whitespace-nowrap">Patient resp.</th>}
-                {visibleCols.patPaid && <th className="py-2.5 px-3 text-right whitespace-nowrap">Patient paid</th>}
+                {visibleCols.allowed && <th className="py-2.5 px-3 text-right whitespace-nowrap font-semibold">Allowed</th>}
+                {visibleCols.insBal && <th className="py-2.5 px-3 text-right whitespace-nowrap font-semibold">Insurance balance</th>}
+                {visibleCols.patResp && <th className="py-2.5 px-3 text-right whitespace-nowrap font-semibold">Patient resp.</th>}
+                {visibleCols.patPaid && <th className="py-2.5 px-3 text-right whitespace-nowrap font-semibold">Patient paid</th>}
                 {visibleCols.claimBal && (
                   <th
                     onClick={() => toggleSort('claimBalance')}
-                    className="py-2.5 px-3 text-right cursor-pointer hover:text-neutral-800 whitespace-nowrap"
+                    className="py-2.5 px-3 text-right cursor-pointer hover:text-foreground whitespace-nowrap font-semibold"
                   >
                     <div className="flex items-center justify-end gap-1">
                       <span>Claim balance</span>
@@ -304,14 +411,14 @@ export default function ClaimsPage() {
                   </th>
                 )}
                 {visibleCols.responsibility && (
-                  <th className="py-2.5 px-3 whitespace-nowrap">Responsibility</th>
+                  <th className="py-2.5 px-3 whitespace-nowrap font-semibold">Responsibility</th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+            <tbody className="divide-y divide-border/50">
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={13} className="py-12 text-center text-xs text-neutral-400">
+                  <td colSpan={13} className="py-12 text-center text-xs text-muted-foreground">
                     No claims match your filter criteria.
                   </td>
                 </tr>
@@ -320,34 +427,34 @@ export default function ClaimsPage() {
                   <tr
                     key={claim.id}
                     onClick={() => router.push(`/claims/${claim.id}`)}
-                    className="hover:bg-emerald-50/40 dark:hover:bg-neutral-800/60 cursor-pointer transition-colors"
+                    className="hover:bg-secondary/20 cursor-pointer transition-colors"
                   >
                     {/* Patient Name */}
-                    <td className="py-2.5 px-3 font-medium text-neutral-900 dark:text-neutral-100 whitespace-nowrap">
+                    <td className="py-2.5 px-3 font-medium text-foreground whitespace-nowrap">
                       <div>{claim.patientName}</div>
-                      <div className="text-[10px] text-neutral-400 font-mono">{claim.id}</div>
+                      <div className="text-[10px] text-muted-foreground font-mono">{claim.id}</div>
                     </td>
 
                     {visibleCols.serviceDate && (
-                      <td className="py-2.5 px-3 whitespace-nowrap text-neutral-600 dark:text-neutral-300">
+                      <td className="py-2.5 px-3 whitespace-nowrap text-muted-foreground">
                         {claim.serviceDate}
                       </td>
                     )}
 
                     {visibleCols.lastUpdated && (
-                      <td className="py-2.5 px-3 whitespace-nowrap text-neutral-400">
+                      <td className="py-2.5 px-3 whitespace-nowrap text-muted-foreground">
                         {claim.lastUpdated}
                       </td>
                     )}
 
                     {visibleCols.payer && (
-                      <td className="py-2.5 px-3 whitespace-nowrap font-medium text-neutral-800 dark:text-neutral-200">
+                      <td className="py-2.5 px-3 whitespace-nowrap font-medium text-foreground">
                         {claim.payer}
                       </td>
                     )}
 
                     {visibleCols.payerId && (
-                      <td className="py-2.5 px-3 whitespace-nowrap font-mono text-neutral-400">
+                      <td className="py-2.5 px-3 whitespace-nowrap font-mono text-muted-foreground">
                         {claim.payerId}
                       </td>
                     )}
@@ -359,31 +466,31 @@ export default function ClaimsPage() {
                     )}
 
                     {visibleCols.billed && (
-                      <td className="py-2.5 px-3 text-right font-medium text-neutral-900 dark:text-neutral-100 whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right font-medium text-foreground whitespace-nowrap">
                         ${claim.billed.toFixed(2)}
                       </td>
                     )}
 
                     {visibleCols.allowed && (
-                      <td className="py-2.5 px-3 text-right text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right text-muted-foreground whitespace-nowrap">
                         ${claim.allowed.toFixed(2)}
                       </td>
                     )}
 
                     {visibleCols.insBal && (
-                      <td className="py-2.5 px-3 text-right text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right text-muted-foreground whitespace-nowrap">
                         ${claim.insuranceBalance.toFixed(2)}
                       </td>
                     )}
 
                     {visibleCols.patResp && (
-                      <td className="py-2.5 px-3 text-right text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right text-muted-foreground whitespace-nowrap">
                         ${claim.patientResp.toFixed(2)}
                       </td>
                     )}
 
                     {visibleCols.patPaid && (
-                      <td className="py-2.5 px-3 text-right text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right text-muted-foreground whitespace-nowrap">
                         ${claim.patientPaid.toFixed(2)}
                       </td>
                     )}
@@ -393,8 +500,8 @@ export default function ClaimsPage() {
                         <span
                           className={
                             claim.claimBalance > 0
-                              ? 'text-rose-600 dark:text-rose-400'
-                              : 'text-neutral-400'
+                              ? 'text-rose-400'
+                              : 'text-muted-foreground'
                           }
                         >
                           ${claim.claimBalance.toFixed(2)}
@@ -407,12 +514,12 @@ export default function ClaimsPage() {
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                             claim.responsibility === 'Clinic'
-                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                              ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
                               : claim.responsibility === 'Taiga'
-                              ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                              ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
                               : claim.responsibility === 'Payer'
-                              ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300'
-                              : 'text-neutral-400'
+                              ? 'bg-sky-500/15 text-sky-300 border border-sky-500/30'
+                              : 'text-muted-foreground'
                           }`}
                         >
                           {claim.responsibility}
@@ -426,8 +533,8 @@ export default function ClaimsPage() {
           </table>
         </div>
 
-        {/* Pagination footer */}
-        <div className="p-3 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs text-neutral-500">
+        {/* Pagination Footer */}
+        <div className="p-3 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
           <div>
             Showing {(page - 1) * pageSize + 1} to{' '}
             {Math.min(page * pageSize, filteredClaims.length)} of{' '}
@@ -438,17 +545,17 @@ export default function ClaimsPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 disabled:opacity-40"
+              className="p-1.5 rounded-md hover:bg-secondary disabled:opacity-40 text-foreground"
             >
               <ChevronLeft className="size-4" />
             </button>
-            <span className="px-2 font-medium text-neutral-800 dark:text-neutral-200">
+            <span className="px-2 font-medium text-foreground">
               Page {page} of {Math.max(1, totalPages)}
             </span>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 disabled:opacity-40"
+              className="p-1.5 rounded-md hover:bg-secondary disabled:opacity-40 text-foreground"
             >
               <ChevronRight className="size-4" />
             </button>

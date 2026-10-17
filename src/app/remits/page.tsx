@@ -5,256 +5,347 @@ import { useApp } from '@/context/AppContext';
 import {
   Receipt,
   Download,
+  Upload,
   Search,
   Filter,
   CheckCircle2,
   Clock,
   ArrowUpDown,
   Building2,
-  FileSpreadsheet
+  FileSpreadsheet,
+  ChevronLeft,
+  ChevronRight,
+  FileText
 } from 'lucide-react';
+import StatusBadge from '@/components/StatusBadge';
 
 export default function RemitsPage() {
   const { remits } = useApp();
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [tab, setTab] = useState<'all' | 'posted' | 'snoozed'>('all');
+
+  // Filter form state
+  const [checkNum, setCheckNum] = useState('');
+  const [checkDate, setCheckDate] = useState('');
+  const [checkAmount, setCheckAmount] = useState('');
+  const [payer, setPayer] = useState('all');
+  const [payeeId, setPayeeId] = useState('');
+  const [postingStatus, setPostingStatus] = useState('all');
+  const [snoozed, setSnoozed] = useState('all');
+
   const [page, setPage] = useState(1);
   const pageSize = 15;
 
   const filtered = remits.filter((r) => {
-    const matchesSearch =
-      r.checkNumber.toLowerCase().includes(search.toLowerCase()) ||
-      r.payer.toLowerCase().includes(search.toLowerCase());
-    if (filter === 'reconciled') return matchesSearch && r.reconciliation === 'Reconciled';
-    if (filter === 'unreconciled') return matchesSearch && r.reconciliation === 'Unreconciled';
-    return matchesSearch;
+    if (tab === 'posted' && r.postingStatus !== 'Posted') return false;
+    if (tab === 'snoozed' && r.reconciliation !== 'Unreconciled') return false;
+
+    if (checkNum.trim() && !r.checkNumber.toLowerCase().includes(checkNum.toLowerCase())) return false;
+    if (checkDate.trim() && !r.checkDate.includes(checkDate)) return false;
+    if (checkAmount.trim() && !r.amount.toString().includes(checkAmount)) return false;
+    if (payer !== 'all' && r.payer !== payer) return false;
+    if (payeeId.trim() && !r.payeeNpi.includes(payeeId)) return false;
+    if (postingStatus !== 'all' && r.postingStatus !== postingStatus) return false;
+
+    return true;
   });
 
   const totalPages = Math.ceil(filtered.length / pageSize);
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const totalAmount = remits.reduce((acc, r) => acc + r.amount, 0);
-  const reconciledAmount = remits
-    .filter((r) => r.reconciliation === 'Reconciled')
-    .reduce((acc, r) => acc + r.amount, 0);
-  const unreconciledAmount = totalAmount - reconciledAmount;
+  const handleDownloadERAs = () => {
+    alert('Exporting 835 EDI ERA files as .zip archive.');
+  };
 
   const handleDownloadEOBs = () => {
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      ['Check Number,Check Date,Amount,Payer,Payee NPI,Reconciliation,Posting']
-        .concat(
-          remits.map(
-            (r) =>
-              `${r.checkNumber},${r.checkDate},${r.amount},${r.payer},${r.payeeNpi},${r.reconciliation},${r.postingStatus}`
-          )
-        )
-        .join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'Taiga_Remits_835_EOB_Export.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    alert('Exporting adjudicated EOB statements as PDF archive.');
+  };
+
+  const handleUploadPaperRemit = () => {
+    alert('Paper remit OCR ingestion modal opened. Drop EOB scan or check stub.');
+  };
+
+  const handleClearFilters = () => {
+    setCheckNum('');
+    setCheckDate('');
+    setCheckAmount('');
+    setPayer('all');
+    setPayeeId('');
+    setPostingStatus('all');
+    setSnoozed('all');
+    setPage(1);
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-7 space-y-4 max-w-[1600px] mx-auto text-foreground">
+      {/* Top Header Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <Receipt className="size-6 text-emerald-600 dark:text-emerald-400" />
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+          <div className="flex items-center gap-2.5">
+            <Receipt className="size-5 text-primary" />
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               Remits
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-            Electronic Remittance Advice (835 ERA) check ledger and bank reconciliation.
+          <p className="text-xs text-muted-foreground mt-1">
+            Electronic remittance advice (835 ERA), checks, and payments
           </p>
         </div>
 
-        <button
-          onClick={handleDownloadEOBs}
-          className="px-3.5 py-2 text-xs font-semibold text-neutral-700 dark:text-neutral-200 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 rounded-lg shadow-2xs flex items-center gap-1.5 transition-colors self-start sm:self-auto"
-        >
-          <Download className="size-4 text-emerald-600" />
-          <span>Download EOBs</span>
-        </button>
-      </div>
-
-      {/* Summary KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-neutral-850 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xs">
-          <span className="text-xs text-neutral-500">Total 835 Remits Posted</span>
-          <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
-            ${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
-          <span className="text-[11px] text-neutral-400 mt-0.5 block">{remits.length} checks received</span>
-        </div>
-
-        <div className="bg-white dark:bg-neutral-850 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xs">
-          <span className="text-xs text-emerald-600 font-medium">Reconciled to Bank</span>
-          <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 mt-1">
-            ${reconciledAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
-          <span className="text-[11px] text-emerald-600/80 mt-0.5 block">
-            Deposit matched via EFT
-          </span>
-        </div>
-
-        <div className="bg-white dark:bg-neutral-850 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xs">
-          <span className="text-xs text-amber-600 font-medium">Unreconciled / In Transit</span>
-          <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mt-1">
-            ${unreconciledAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
-          <span className="text-[11px] text-amber-600/80 mt-0.5 block">Pending settlement</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleUploadPaperRemit}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/80 bg-secondary/60 hover:bg-secondary text-xs font-medium text-foreground transition-colors shadow-xs"
+          >
+            <Upload className="size-3.5 text-muted-foreground" />
+            <span>Upload paper remit</span>
+          </button>
+          <button
+            onClick={handleDownloadERAs}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/80 bg-secondary/60 hover:bg-secondary text-xs font-medium text-foreground transition-colors shadow-xs"
+          >
+            <Download className="size-3.5 text-muted-foreground" />
+            <span>Download ERAs</span>
+          </button>
+          <button
+            onClick={handleDownloadEOBs}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/80 bg-secondary/60 hover:bg-secondary text-xs font-medium text-foreground transition-colors shadow-xs"
+          >
+            <FileText className="size-3.5 text-muted-foreground" />
+            <span>Download EOBs</span>
+          </button>
         </div>
       </div>
 
-      {/* Filter and Table */}
-      <div className="bg-white dark:bg-neutral-850 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden shadow-xs space-y-3 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 flex-1 max-w-sm">
-            <Search className="size-3.5 text-neutral-400" />
+      {/* Tabs */}
+      <div className="flex items-center gap-1 border-b border-border/70 overflow-x-auto text-xs font-medium pb-2 scrollbar-none">
+        {[
+          { key: 'all', label: 'All', count: remits.length },
+          { key: 'posted', label: 'Posted', count: remits.filter((r) => r.postingStatus === 'Posted').length },
+          { key: 'snoozed', label: 'Snoozed', count: remits.filter((r) => r.reconciliation === 'Unreconciled').length }
+        ].map((t) => (
+          <button
+            key={t.key}
+            onClick={() => {
+              setTab(t.key as any);
+              setPage(1);
+            }}
+            className={`px-3.5 py-1.5 rounded-lg transition-colors whitespace-nowrap text-xs font-medium flex items-center gap-1.5 ${
+              tab === t.key
+                ? 'bg-secondary text-foreground font-semibold shadow-xs'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+            }`}
+          >
+            <span>{t.label}</span>
+            <span className="text-[11px] opacity-75">({t.count})</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Check Filters Form Container */}
+      <div className="bg-card p-4 rounded-xl border border-border/80 shadow-xs space-y-3 text-xs">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
+          Check Filters
+        </span>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2.5">
+          {/* 1. Check number */}
+          <div>
+            <label className="text-muted-foreground text-[11px] block mb-1">Check number</label>
             <input
               type="text"
-              placeholder="Search by check # or payer..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="w-full px-3 py-1.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs"
+              placeholder="e.g. AET-558201"
+              value={checkNum}
+              onChange={(e) => setCheckNum(e.target.value)}
+              className="w-full px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setFilter('all');
-                setPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-lg font-medium ${
-                filter === 'all'
-                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
-                  : 'text-neutral-500 hover:bg-neutral-100'
-              }`}
+          {/* 2. Check date */}
+          <div>
+            <label className="text-muted-foreground text-[11px] block mb-1">Check date</label>
+            <input
+              type="text"
+              placeholder="Sep 27, 2026"
+              value={checkDate}
+              onChange={(e) => setCheckDate(e.target.value)}
+              className="w-full px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+
+          {/* 3. Check amount */}
+          <div>
+            <label className="text-muted-foreground text-[11px] block mb-1">Check amount</label>
+            <input
+              type="text"
+              placeholder="$0.00"
+              value={checkAmount}
+              onChange={(e) => setCheckAmount(e.target.value)}
+              className="w-full px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+
+          {/* 4. Payer */}
+          <div>
+            <label className="text-muted-foreground text-[11px] block mb-1">Payer</label>
+            <select
+              value={payer}
+              onChange={(e) => setPayer(e.target.value)}
+              className="w-full px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground cursor-pointer focus:outline-none"
             >
-              All
-            </button>
-            <button
-              onClick={() => {
-                setFilter('reconciled');
-                setPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-lg font-medium ${
-                filter === 'reconciled'
-                  ? 'bg-emerald-600 text-white'
-                  : 'text-neutral-500 hover:bg-neutral-100'
-              }`}
+              <option value="all">All payers</option>
+              <option value="Aetna">Aetna</option>
+              <option value="Blue Cross Blue Shield">Blue Cross Blue Shield</option>
+              <option value="UnitedHealthcare">UnitedHealthcare</option>
+              <option value="Cigna">Cigna</option>
+              <option value="Oregon Health Plan">Oregon Health Plan</option>
+            </select>
+          </div>
+
+          {/* 5. Payee identifier */}
+          <div>
+            <label className="text-muted-foreground text-[11px] block mb-1">Payee identifier</label>
+            <input
+              type="text"
+              placeholder="NPI / TIN"
+              value={payeeId}
+              onChange={(e) => setPayeeId(e.target.value)}
+              className="w-full px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+
+          {/* 6. Posting status */}
+          <div>
+            <label className="text-muted-foreground text-[11px] block mb-1">Posting status</label>
+            <select
+              value={postingStatus}
+              onChange={(e) => setPostingStatus(e.target.value)}
+              className="w-full px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground cursor-pointer focus:outline-none"
             >
-              Reconciled
-            </button>
-            <button
-              onClick={() => {
-                setFilter('unreconciled');
-                setPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-lg font-medium ${
-                filter === 'unreconciled'
-                  ? 'bg-amber-600 text-white'
-                  : 'text-neutral-500 hover:bg-neutral-100'
-              }`}
+              <option value="all">All statuses</option>
+              <option value="Posted">Posted</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+
+          {/* 7. Snoozed */}
+          <div>
+            <label className="text-muted-foreground text-[11px] block mb-1">Snoozed</label>
+            <select
+              value={snoozed}
+              onChange={(e) => setSnoozed(e.target.value)}
+              className="w-full px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground cursor-pointer focus:outline-none"
             >
-              Unreconciled
-            </button>
+              <option value="all">All</option>
+              <option value="snoozed">Snoozed only</option>
+              <option value="active">Active only</option>
+            </select>
           </div>
         </div>
 
-        <div className="overflow-x-auto pt-2">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/50">
+          <button
+            onClick={handleClearFilters}
+            className="px-3 py-1.5 rounded-lg border border-border/80 bg-secondary/50 hover:bg-secondary text-xs font-medium text-foreground"
+          >
+            Clear filters
+          </button>
+          <button
+            onClick={() => setPage(1)}
+            className="px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-xs"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+
+      {/* Remits Dense Table */}
+      <div className="bg-card rounded-xl border border-border/80 overflow-hidden shadow-xs">
+        <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-neutral-50 dark:bg-neutral-800/60 border-b border-neutral-200 dark:border-neutral-700 text-neutral-500 font-medium">
+            <thead className="bg-secondary/40 border-b border-border text-muted-foreground font-medium">
               <tr>
-                <th className="py-2.5 px-3">Check no.</th>
-                <th className="py-2.5 px-3">Check date</th>
-                <th className="py-2.5 px-3 text-right">Amount</th>
-                <th className="py-2.5 px-3">Payer</th>
-                <th className="py-2.5 px-3 font-mono">Payee NPI</th>
-                <th className="py-2.5 px-3 text-center">Claims</th>
-                <th className="py-2.5 px-3">Reconciliation</th>
-                <th className="py-2.5 px-3">Posting</th>
-                <th className="py-2.5 px-3">Received</th>
-                <th className="py-2.5 px-3">Posted</th>
+                <th className="py-2.5 px-3 font-semibold">Check number</th>
+                <th className="py-2.5 px-3 font-semibold">Check date</th>
+                <th className="py-2.5 px-3 font-semibold">Payer</th>
+                <th className="py-2.5 px-3 font-semibold">Payee identifier</th>
+                <th className="py-2.5 px-3 text-right font-semibold">Check amount</th>
+                <th className="py-2.5 px-3 font-semibold">Posting status</th>
+                <th className="py-2.5 px-3 font-semibold">Reconciliation</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-              {paginated.map((r) => (
-                <tr key={r.id} className="hover:bg-neutral-50/60 dark:hover:bg-neutral-800/40">
-                  <td className="py-3 px-3 font-mono font-bold text-neutral-900 dark:text-neutral-100">
-                    {r.checkNumber}
+            <tbody className="divide-y divide-border/50">
+              {paginated.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-xs text-muted-foreground">
+                    No remits match your filter parameters.
                   </td>
-                  <td className="py-3 px-3 text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
-                    {r.checkDate}
-                  </td>
-                  <td className="py-3 px-3 text-right font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                    ${r.amount.toFixed(2)}
-                  </td>
-                  <td className="py-3 px-3 font-medium text-neutral-900 dark:text-neutral-100 whitespace-nowrap">
-                    {r.payer}
-                  </td>
-                  <td className="py-3 px-3 font-mono text-neutral-400 text-[11px] whitespace-nowrap">
-                    {r.payeeNpi}
-                  </td>
-                  <td className="py-3 px-3 text-center font-medium">{r.claimsCount}</td>
-                  <td className="py-3 px-3 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                        r.reconciliation === 'Reconciled'
-                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
-                          : 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
-                      }`}
-                    >
-                      {r.reconciliation}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 whitespace-nowrap">
-                    <span className="text-neutral-700 dark:text-neutral-300 font-medium">
-                      {r.postingStatus}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 text-neutral-400 whitespace-nowrap">{r.receivedDate}</td>
-                  <td className="py-3 px-3 text-neutral-400 whitespace-nowrap">{r.postedDate}</td>
                 </tr>
-              ))}
+              ) : (
+                paginated.map((r) => (
+                  <tr key={r.id} className="hover:bg-secondary/20 transition-colors">
+                    <td className="py-3 px-3 font-mono font-bold text-foreground">
+                      {r.checkNumber}
+                    </td>
+                    <td className="py-3 px-3 text-muted-foreground whitespace-nowrap">
+                      {r.checkDate}
+                    </td>
+                    <td className="py-3 px-3 font-medium text-foreground whitespace-nowrap">
+                      {r.payer}
+                    </td>
+                    <td className="py-3 px-3 font-mono text-muted-foreground text-[11px] whitespace-nowrap">
+                      {r.payeeNpi}
+                    </td>
+                    <td className="py-3 px-3 text-right font-bold text-emerald-400 whitespace-nowrap">
+                      ${r.amount.toFixed(2)}
+                    </td>
+                    <td className="py-3 px-3 whitespace-nowrap">
+                      <span className="font-medium text-foreground">
+                        {r.postingStatus}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                          r.reconciliation === 'Reconciled'
+                            ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                            : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                        }`}
+                      >
+                        {r.reconciliation}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="pt-3 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs text-neutral-500">
-          <span>
-            Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, filtered.length)} of{' '}
+        {/* Pagination Footer */}
+        <div className="p-3 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
+          <div>
+            Showing {(page - 1) * pageSize + 1} to{' '}
+            {Math.min(page * pageSize, filtered.length)} of{' '}
             {filtered.length} entries
-          </span>
-          <div className="flex items-center gap-2">
+          </div>
+
+          <div className="flex items-center gap-1">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-2 py-1 rounded bg-neutral-100 dark:bg-neutral-800 disabled:opacity-40"
+              className="p-1.5 rounded-md hover:bg-secondary disabled:opacity-40 text-foreground"
             >
-              Previous
+              <ChevronLeft className="size-4" />
             </button>
-            <span className="font-semibold">
-              {page} / {Math.max(1, totalPages)}
+            <span className="px-2 font-medium text-foreground">
+              Page {page} of {Math.max(1, totalPages)}
             </span>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="px-2 py-1 rounded bg-neutral-100 dark:bg-neutral-800 disabled:opacity-40"
+              className="p-1.5 rounded-md hover:bg-secondary disabled:opacity-40 text-foreground"
             >
-              Next
+              <ChevronRight className="size-4" />
             </button>
           </div>
         </div>

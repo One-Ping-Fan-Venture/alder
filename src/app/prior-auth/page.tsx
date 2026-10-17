@@ -2,241 +2,162 @@
 
 import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
-import { KeyRound, Plus, X, Search, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
+import { KeyRound, Search, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
 
 export default function PriorAuthPage() {
-  const { priorAuths, patients } = useApp();
-  const [filter, setFilter] = useState('all');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { priorAuths } = useApp();
+  const [filter, setFilter] = useState<'all' | 'needs_info' | 'pending' | 'approved' | 'denied'>('all');
+  const [search, setSearch] = useState('');
 
-  const [authList, setAuthList] = useState(priorAuths);
+  const filtered = priorAuths.filter((pa) => {
+    if (filter === 'approved' && pa.status !== 'Approved') return false;
+    if (filter === 'pending' && pa.status !== 'Pending payer') return false;
+    if (filter === 'needs_info' && pa.status !== 'Needs information') return false;
+    if (filter === 'denied' && pa.status !== 'Denied') return false;
 
-  // New auth form state
-  const [patientName, setPatientName] = useState('Amelia Ross');
-  const [serviceCode, setServiceCode] = useState('73721');
-  const [serviceName, setServiceName] = useState('MRI lower extremity');
-  const [payer, setPayer] = useState('Blue Cross Blue Shield');
-
-  const filtered = authList.filter((pa) => {
-    if (filter === 'approved') return pa.status === 'Approved';
-    if (filter === 'pending') return pa.status === 'Pending payer';
-    if (filter === 'needs_info') return pa.status === 'Needs information';
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      return (
+        pa.patientName.toLowerCase().includes(q) ||
+        pa.authNumber.toLowerCase().includes(q) ||
+        pa.serviceName.toLowerCase().includes(q) ||
+        pa.serviceCode.toLowerCase().includes(q) ||
+        pa.payer.toLowerCase().includes(q)
+      );
+    }
     return true;
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newPa = {
-      id: `pa-${Date.now().toString().slice(-4)}`,
-      authNumber: `PA-${Math.floor(1000 + Math.random() * 9000)}`,
-      patientName,
-      patientId: 'pat-gen',
-      serviceCode,
-      serviceName,
-      payer,
-      plan: 'Commercial PPO',
-      status: 'Pending payer' as const,
-      submittedDate: 'Oct 17, 2026',
-      expirationDate: 'Jan 17, 2027',
-      notes: 'Initial clinical justification and medical necessity documentation submitted.'
-    };
-    setAuthList([newPa, ...authList]);
-    setIsModalOpen(false);
+  const counts = {
+    all: priorAuths.length,
+    needs_info: priorAuths.filter((p) => p.status === 'Needs information').length,
+    pending: priorAuths.filter((p) => p.status === 'Pending payer').length,
+    approved: priorAuths.filter((p) => p.status === 'Approved').length,
+    denied: priorAuths.filter((p) => p.status === 'Denied').length
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-7 space-y-4 max-w-[1600px] mx-auto text-foreground">
+      {/* Top Header Row (Read-only tracking board matching demo) */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <KeyRound className="size-6 text-emerald-600 dark:text-emerald-400" />
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+          <div className="flex items-center gap-2.5">
+            <KeyRound className="size-5 text-primary" />
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               Prior Auth
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-            Prior authorization tracking for specialty procedures, diagnostic imaging, and therapies.
+          <p className="text-xs text-muted-foreground mt-1">
+            Tracking prior authorization status and payer approvals
           </p>
         </div>
-
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="px-3.5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-xs flex items-center gap-1.5 transition-colors self-start sm:self-auto"
-        >
-          <Plus className="size-4" />
-          <span>New Prior Auth</span>
-        </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 pb-2 text-xs font-medium">
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-3 py-1.5 rounded-lg ${filter === 'all' ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 font-semibold' : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
-        >
-          All Auths ({authList.length})
-        </button>
-        <button
-          onClick={() => setFilter('approved')}
-          className={`px-3 py-1.5 rounded-lg ${filter === 'approved' ? 'bg-emerald-600 text-white font-semibold' : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
-        >
-          Approved
-        </button>
-        <button
-          onClick={() => setFilter('pending')}
-          className={`px-3 py-1.5 rounded-lg ${filter === 'pending' ? 'bg-amber-600 text-white font-semibold' : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
-        >
-          Pending Payer
-        </button>
-        <button
-          onClick={() => setFilter('needs_info')}
-          className={`px-3 py-1.5 rounded-lg ${filter === 'needs_info' ? 'bg-rose-600 text-white font-semibold' : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
-        >
-          Needs Information
-        </button>
+      {/* 5 Filter Tabs */}
+      <div className="flex items-center gap-1 border-b border-border/70 overflow-x-auto text-xs font-medium pb-2 scrollbar-none">
+        {[
+          { key: 'all', label: 'All', count: counts.all },
+          { key: 'needs_info', label: 'Needs information', count: counts.needs_info },
+          { key: 'pending', label: 'Pending payer', count: counts.pending },
+          { key: 'approved', label: 'Approved', count: counts.approved },
+          { key: 'denied', label: 'Denied', count: counts.denied }
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setFilter(tab.key as any)}
+            className={`px-3.5 py-1.5 rounded-lg transition-colors whitespace-nowrap text-xs font-medium flex items-center gap-1.5 ${
+              filter === tab.key
+                ? 'bg-secondary text-foreground font-semibold shadow-xs'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+            }`}
+          >
+            <span>{tab.label}</span>
+            <span className="text-[11px] opacity-75">({tab.count})</span>
+          </button>
+        ))}
       </div>
 
-      {/* Table */}
-      <div className="bg-white dark:bg-neutral-850 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden shadow-xs">
+      {/* Search Toolbar */}
+      <div className="bg-card p-3 rounded-xl border border-border/80 shadow-xs flex items-center justify-between gap-3 text-xs">
+        <div className="relative min-w-[240px] flex-1 max-w-sm">
+          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search authorizations, patients, CPT..."
+            className="w-full pl-8 pr-3 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+        <span className="text-muted-foreground font-mono text-[11px]">
+          {filtered.length} Authorizations
+        </span>
+      </div>
+
+      {/* 5-Column Table */}
+      <div className="bg-card rounded-xl border border-border/80 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-neutral-50 dark:bg-neutral-800/60 border-b border-neutral-200 dark:border-neutral-700 text-neutral-500 font-medium">
+            <thead className="bg-secondary/40 border-b border-border text-muted-foreground font-medium">
               <tr>
-                <th className="py-2.5 px-3">Patient & Auth #</th>
-                <th className="py-2.5 px-3">Service</th>
-                <th className="py-2.5 px-3">Payer</th>
-                <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3">Submitted</th>
-                <th className="py-2.5 px-3">Expiration</th>
-                <th className="py-2.5 px-3">Clinical Notes</th>
+                <th className="py-2.5 px-3 font-semibold">Patient</th>
+                <th className="py-2.5 px-3 font-semibold">Service</th>
+                <th className="py-2.5 px-3 font-semibold">Payer</th>
+                <th className="py-2.5 px-3 font-semibold">Status</th>
+                <th className="py-2.5 px-3 font-semibold">Submitted</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-              {filtered.map((pa) => (
-                <tr key={pa.id} className="hover:bg-neutral-50/60 dark:hover:bg-neutral-800/40">
-                  <td className="py-3 px-3">
-                    <div className="font-bold text-neutral-900 dark:text-neutral-100">
-                      {pa.patientName}
-                    </div>
-                    <span className="font-mono text-[11px] text-neutral-400 font-medium">
-                      {pa.authNumber}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3">
-                    <div className="font-mono font-bold text-neutral-800 dark:text-neutral-200">
-                      {pa.serviceCode}
-                    </div>
-                    <div className="text-[11px] text-neutral-400">{pa.serviceName}</div>
-                  </td>
-                  <td className="py-3 px-3 font-medium text-neutral-800 dark:text-neutral-200">
-                    <div>{pa.payer}</div>
-                    <div className="text-[10px] text-neutral-400">{pa.plan}</div>
-                  </td>
-                  <td className="py-3 px-3">
-                    <StatusBadge status={pa.status} size="sm" />
-                  </td>
-                  <td className="py-3 px-3 text-neutral-500">{pa.submittedDate}</td>
-                  <td className="py-3 px-3 text-neutral-500">{pa.expirationDate}</td>
-                  <td className="py-3 px-3 text-neutral-500 text-[11px] max-w-xs truncate">
-                    {pa.notes}
+            <tbody className="divide-y divide-border/50">
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-12 text-center text-xs text-muted-foreground">
+                    No prior authorizations match your criteria.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filtered.map((pa) => (
+                  <tr key={pa.id} className="hover:bg-secondary/20 transition-colors">
+                    {/* 1. Patient */}
+                    <td className="py-3 px-3">
+                      <div className="font-bold text-foreground">
+                        {pa.patientName}
+                      </div>
+                      <span className="font-mono text-[11px] text-muted-foreground">
+                        {pa.authNumber}
+                      </span>
+                    </td>
+
+                    {/* 2. Service */}
+                    <td className="py-3 px-3">
+                      <div className="font-mono font-bold text-primary">
+                        {pa.serviceCode}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">{pa.serviceName}</div>
+                    </td>
+
+                    {/* 3. Payer */}
+                    <td className="py-3 px-3 font-medium text-foreground">
+                      <div>{pa.payer}</div>
+                      <div className="text-[10px] text-muted-foreground">{pa.plan}</div>
+                    </td>
+
+                    {/* 4. Status */}
+                    <td className="py-3 px-3">
+                      <StatusBadge status={pa.status} size="sm" />
+                    </td>
+
+                    {/* 5. Submitted */}
+                    <td className="py-3 px-3 text-muted-foreground whitespace-nowrap">
+                      {pa.submittedDate}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xl p-5 space-y-4"
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-800">
-              <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
-                Submit New Prior Auth Request
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-neutral-400 hover:text-neutral-600"
-              >
-                <X className="size-4" />
-              </button>
-            </div>
-
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="block text-neutral-500 mb-1">Patient Name</label>
-                <input
-                  type="text"
-                  required
-                  value={patientName}
-                  onChange={(e) => setPatientName(e.target.value)}
-                  className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-neutral-500 mb-1">CPT Code</label>
-                  <input
-                    type="text"
-                    required
-                    value={serviceCode}
-                    onChange={(e) => setServiceCode(e.target.value)}
-                    className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-neutral-500 mb-1">Service Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={serviceName}
-                    onChange={(e) => setServiceName(e.target.value)}
-                    className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-neutral-500 mb-1">Payer</label>
-                <select
-                  value={payer}
-                  onChange={(e) => setPayer(e.target.value)}
-                  className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs"
-                >
-                  <option>Blue Cross Blue Shield</option>
-                  <option>Aetna</option>
-                  <option>Cigna</option>
-                  <option>UnitedHealthcare</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="px-3 py-1.5 text-xs text-neutral-600 hover:bg-neutral-100 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg"
-              >
-                Submit Auth
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   );
 }

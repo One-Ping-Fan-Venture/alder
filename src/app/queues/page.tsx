@@ -7,20 +7,41 @@ import {
   Layers,
   AlertTriangle,
   ArrowRight,
-  Clock,
-  CheckCircle2,
   ChevronRight,
-  ShieldAlert,
-  FileCode,
-  UserCheck
+  Search,
+  Columns,
+  ChevronDown,
+  Info
 } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
 
 export default function QueuesPage() {
   const { queues, claims } = useApp();
+  const [activeTab, setActiveTab] = useState<
+    'coding' | 'pre_submission' | 'rejections' | 'denials' | 'stale' | 'other'
+  >('coding');
+  const [searchQueue, setSearchQueue] = useState('');
+  const [hideEmpty, setHideEmpty] = useState(false);
   const [selectedQueueId, setSelectedQueueId] = useState<string | null>(queues[0]?.id || null);
 
   const selectedQueue = queues.find((q) => q.id === selectedQueueId) || queues[0];
+
+  // Category counts
+  const categoryTabs = [
+    { key: 'coding', label: 'Coding', count: 51 },
+    { key: 'pre_submission', label: 'Pre-Submission', count: 102 },
+    { key: 'rejections', label: 'Rejections', count: 40 },
+    { key: 'denials', label: 'Denials', count: 3 },
+    { key: 'stale', label: 'Stale Claims', count: 18 },
+    { key: 'other', label: 'Other Post-Submission', count: 12 }
+  ];
+
+  // Filter queues based on tab & search
+  const filteredQueues = queues.filter((q) => {
+    if (hideEmpty && q.totalClaims === 0) return false;
+    if (searchQueue.trim() && !q.name.toLowerCase().includes(searchQueue.toLowerCase())) return false;
+    return true;
+  });
 
   // Claims for selected queue
   const queueClaims = claims.filter((c) => {
@@ -33,58 +54,103 @@ export default function QueuesPage() {
     return true;
   }).slice(0, 8);
 
-  const totalAllClaims = queues.reduce((acc, q) => acc + q.totalClaims, 0);
-  const totalAllBalance = queues.reduce((acc, q) => acc + q.totalBalance, 0);
-
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
+    <div className="p-4 sm:p-6 lg:p-7 space-y-4 max-w-[1600px] mx-auto text-foreground">
+      {/* Top Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <Layers className="size-6 text-emerald-600 dark:text-emerald-400" />
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-              Work Queues
+          <div className="flex items-center gap-2.5">
+            <Layers className="size-5 text-primary" />
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              Queues
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-            Categorized operational queues to identify and prevent revenue leakage.
+          <p className="text-xs text-muted-foreground mt-1">
+            Operational queues to triage and resolve claims
           </p>
         </div>
+      </div>
 
-        <div className="flex items-center gap-3 text-xs">
-          <div className="px-3 py-1.5 bg-white dark:bg-neutral-850 rounded-lg border border-neutral-200 dark:border-neutral-800 shadow-2xs">
-            <span>Active Queue Claims: </span>
-            <strong className="text-neutral-900 dark:text-neutral-100 font-bold ml-1">
-              {totalAllClaims}
-            </strong>
-          </div>
-          <div className="px-3 py-1.5 bg-white dark:bg-neutral-850 rounded-lg border border-neutral-200 dark:border-neutral-800 shadow-2xs">
-            <span>At-Risk Balance: </span>
-            <strong className="text-rose-600 dark:text-rose-400 font-bold ml-1">
-              ${totalAllBalance.toLocaleString()}
-            </strong>
-          </div>
+      {/* Amber Notice Banner */}
+      <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs text-amber-300 flex items-center gap-2.5 shadow-xs">
+        <Info className="size-4 text-amber-400 shrink-0" />
+        <span>
+          Queues may have delayed updates due to real-time clearinghouse sync (polling every 15 minutes).
+        </span>
+      </div>
+
+      {/* 6 Category Tabs */}
+      <div className="flex items-center gap-1 border-b border-border/70 overflow-x-auto text-xs font-medium pb-2 scrollbar-none">
+        {categoryTabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key as any)}
+            className={`px-3.5 py-1.5 rounded-lg transition-colors whitespace-nowrap text-xs font-medium flex items-center gap-1.5 ${
+              activeTab === tab.key
+                ? 'bg-secondary text-foreground font-semibold shadow-xs'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+            }`}
+          >
+            <span>{tab.label}</span>
+            <span className="text-[11px] opacity-75">({tab.count})</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Filter / Search Bar */}
+      <div className="bg-card p-3 rounded-xl border border-border/80 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="relative min-w-[240px] flex-1 max-w-sm">
+          <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQueue}
+            onChange={(e) => setSearchQueue(e.target.value)}
+            placeholder="Search queue name..."
+            className="w-full pl-8 pr-3 py-1.5 bg-background border border-border/80 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
+        <div className="flex items-center gap-4">
+          {/* Hide empty queues toggle */}
+          <label className="flex items-center gap-2 cursor-pointer select-none text-muted-foreground hover:text-foreground">
+            <input
+              type="checkbox"
+              checked={hideEmpty}
+              onChange={(e) => setHideEmpty(e.target.checked)}
+              className="rounded accent-primary"
+            />
+            <span>Hide empty queues</span>
+          </label>
+
+          {/* Columns menu */}
+          <button
+            onClick={() => alert('Custom column ordering applied.')}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border/80 bg-secondary/50 hover:bg-secondary text-xs font-medium text-foreground"
+          >
+            <Columns className="size-3.5 text-muted-foreground" />
+            <span>Columns</span>
+            <ChevronDown className="size-3 text-muted-foreground" />
+          </button>
         </div>
       </div>
 
       {/* Main Queues Table */}
-      <div className="bg-white dark:bg-neutral-850 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden shadow-xs">
+      <div className="bg-card rounded-xl border border-border/80 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-neutral-50 dark:bg-neutral-800/60 border-b border-neutral-200 dark:border-neutral-700 text-neutral-500 font-medium">
+            <thead className="bg-secondary/40 border-b border-border text-muted-foreground font-medium">
               <tr>
-                <th className="py-2.5 px-3">Queue</th>
-                <th className="py-2.5 px-3 text-right">Total claims</th>
-                <th className="py-2.5 px-3 text-right">Total balance</th>
-                <th className="py-2.5 px-3 text-center">Taiga review</th>
-                <th className="py-2.5 px-3 text-center">Clinic action</th>
-                <th className="py-2.5 px-3 text-right">Snoozed claims</th>
-                <th className="py-2.5 px-3 text-right">Snoozed balance</th>
+                <th className="py-2.5 px-3 font-semibold">Queue</th>
+                <th className="py-2.5 px-3 text-right font-semibold">Total claims</th>
+                <th className="py-2.5 px-3 text-right font-semibold">Total balance</th>
+                <th className="py-2.5 px-3 text-center font-semibold">Taiga review</th>
+                <th className="py-2.5 px-3 text-center font-semibold">Clinic action</th>
+                <th className="py-2.5 px-3 text-right font-semibold">Snoozed claims</th>
+                <th className="py-2.5 px-3 text-right font-semibold">Snoozed balance</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-              {queues.map((q) => {
+            <tbody className="divide-y divide-border/50">
+              {filteredQueues.map((q) => {
                 const isSelected = selectedQueueId === q.id;
                 return (
                   <tr
@@ -92,38 +158,38 @@ export default function QueuesPage() {
                     onClick={() => setSelectedQueueId(q.id)}
                     className={`cursor-pointer transition-colors ${
                       isSelected
-                        ? 'bg-emerald-50/60 dark:bg-emerald-950/30'
-                        : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/40'
+                        ? 'bg-secondary text-foreground font-semibold border-l-2 border-primary'
+                        : 'hover:bg-secondary/20 text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     <td className="py-3 px-3">
-                      <div className="font-bold text-neutral-900 dark:text-neutral-100">
+                      <div className="font-bold text-foreground">
                         {q.name}
                       </div>
-                      <div className="text-[11px] text-neutral-400 max-w-md truncate">
+                      <div className="text-[11px] text-muted-foreground max-w-md truncate">
                         {q.description}
                       </div>
                     </td>
-                    <td className="py-3 px-3 text-right font-bold text-neutral-900 dark:text-neutral-100">
+                    <td className="py-3 px-3 text-right font-bold text-foreground">
                       {q.totalClaims}
                     </td>
-                    <td className="py-3 px-3 text-right font-semibold">
+                    <td className="py-3 px-3 text-right font-semibold text-foreground">
                       ${q.totalBalance.toLocaleString()}
                     </td>
                     <td className="py-3 px-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                      <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30">
                         {q.taigaReview}
                       </span>
                     </td>
                     <td className="py-3 px-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                      <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
                         {q.clinicAction}
                       </span>
                     </td>
-                    <td className="py-3 px-3 text-right text-neutral-500 font-mono">
+                    <td className="py-3 px-3 text-right text-muted-foreground font-mono">
                       {q.snoozedClaims}
                     </td>
-                    <td className="py-3 px-3 text-right text-neutral-400">
+                    <td className="py-3 px-3 text-right text-muted-foreground">
                       ${q.snoozedBalance.toLocaleString()}
                     </td>
                   </tr>
@@ -136,20 +202,20 @@ export default function QueuesPage() {
 
       {/* Selected Queue Claims Drilldown */}
       {selectedQueue && (
-        <div className="bg-white dark:bg-neutral-850 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-neutral-100 dark:border-neutral-800">
+        <div className="bg-card rounded-xl border border-border/80 p-5 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-border/60">
             <div>
-              <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">
+              <span className="text-[10px] font-semibold text-primary uppercase tracking-wider">
                 Active Queue Drilldown
               </span>
-              <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100 mt-0.5">
+              <h2 className="text-base font-bold text-foreground mt-0.5">
                 {selectedQueue.name}
               </h2>
-              <p className="text-xs text-neutral-500">{selectedQueue.description}</p>
+              <p className="text-xs text-muted-foreground">{selectedQueue.description}</p>
             </div>
             <Link
               href="/claims"
-              className="text-xs font-semibold text-emerald-600 hover:underline flex items-center gap-1"
+              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
             >
               <span>Open in Claims view</span>
               <ChevronRight className="size-3" />
@@ -160,34 +226,34 @@ export default function QueuesPage() {
             {queueClaims.map((claim) => (
               <div
                 key={claim.id}
-                className="p-3 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-800/30 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs"
+                className="p-3 rounded-lg border border-border/70 bg-secondary/30 hover:border-primary/40 transition-colors flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs"
               >
                 <div>
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/claims/${claim.id}`}
-                      className="font-bold text-neutral-900 dark:text-neutral-100 hover:text-emerald-600 hover:underline"
+                      className="font-bold text-foreground hover:text-primary hover:underline"
                     >
                       {claim.patientName}
                     </Link>
-                    <span className="font-mono text-neutral-400 text-[11px]">{claim.id}</span>
+                    <span className="font-mono text-muted-foreground text-[11px]">{claim.id}</span>
                     <StatusBadge status={claim.status} size="sm" />
                   </div>
-                  <div className="text-[11px] text-neutral-400 mt-1">
+                  <div className="text-[11px] text-muted-foreground mt-1">
                     {claim.payer} · DOS: {claim.serviceDate} · CPT: {claim.cptCode}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <span className="text-neutral-400 text-[10px] block">Claim Balance</span>
-                    <span className="font-bold text-rose-600 dark:text-rose-400 text-sm">
+                    <span className="text-muted-foreground text-[10px] block">Claim Balance</span>
+                    <span className="font-bold text-rose-400 text-sm">
                       ${claim.claimBalance.toFixed(2)}
                     </span>
                   </div>
                   <Link
                     href={`/claims/${claim.id}`}
-                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-xs flex items-center gap-1 transition-colors"
+                    className="px-3 py-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg text-xs flex items-center gap-1 transition-colors shadow-xs"
                   >
                     <span>Work Claim</span>
                     <ArrowRight className="size-3" />

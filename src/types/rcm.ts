@@ -141,7 +141,7 @@ export interface PriorAuth {
   serviceName: string;
   payer: string;
   plan: string;
-  status: 'Approved' | 'Pending payer' | 'Needs information';
+  status: 'Approved' | 'Pending payer' | 'Needs information' | 'Denied';
   submittedDate: string;
   expirationDate: string;
   notes: string;

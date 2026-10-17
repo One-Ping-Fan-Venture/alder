@@ -15,16 +15,20 @@ export default function Header() {
   if (['reports', 'claims', 'queues', 'prior-auth', 'remits', 'collections'].includes(segments[0])) {
     section = 'Billing';
   } else if (['developers', 'settings', 'tickets'].includes(segments[0])) {
-    section = 'System';
+    section = 'Practice';
   }
 
   const pageTitle = segments.length === 0
     ? 'Overview'
-    : segments[0] === 'collections'
-      ? 'Patient Balances'
-      : segments[0] === 'prior-auth'
-        ? 'Prior Auth'
-        : segments[0].charAt(0).toUpperCase() + segments[0].slice(1).replace('-', ' ');
+    : segments[0] === 'appointments'
+      ? 'Front Desk'
+      : segments[0] === 'collections'
+        ? 'Patient Balances'
+        : segments[0] === 'prior-auth'
+          ? 'Prior Auth'
+          : segments[0] === 'settings'
+            ? 'Settings & configuration'
+            : segments[0].charAt(0).toUpperCase() + segments[0].slice(1).replace('-', ' ');
 
   return (
     <header className="flex min-h-14 sm:min-h-16 shrink-0 flex-wrap items-center justify-between gap-y-2 px-4 md:px-6 py-2 md:py-0 border-b border-border/70 bg-background/50 backdrop-blur-xs select-none">
