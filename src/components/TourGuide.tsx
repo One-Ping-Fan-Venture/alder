@@ -3,17 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
-import {
-  Compass,
-  X,
-  ChevronRight,
-  ChevronLeft,
-  Gauge,
-  Users,
-  FileText,
-  Code2,
-  CheckCircle2
-} from 'lucide-react';
 
 export default function TourGuide() {
   const router = useRouter();
@@ -22,67 +11,123 @@ export default function TourGuide() {
 
   const steps = [
     {
-      title: 'Welcome to Taiga Billing RCM',
-      badge: 'Platform Tour (1/4)',
-      icon: Gauge,
+      title: 'Welcome to Taiga',
+      description: "Your billing home base. Let's take a proper lap. We'll open a real claim and a remit along the way.",
       page: '/',
-      description:
-        'Taiga Billing is a modern revenue cycle management system designed to eliminate billing blind spots. From the Overview dashboard, monitor total cash collected, payer balance in flight, clean claim denial rates (0.6%), and open billing tasks in real-time.',
-      highlights: [
-        '$287,303 in cash collected over the last 30 days',
-        '211 claims actively awaiting payer response ($227k)',
-        'Real-time stream of actionable tasks: working denials, clinic info requests'
-      ]
+      top: '420px',
+      left: '370px'
     },
     {
-      title: 'Front Desk & Real-Time Eligibility',
-      badge: 'Practice (2/4)',
-      icon: Users,
+      title: 'Overview & Collections',
+      description: 'Cash collected, claims submitted in the last 30 days, and current payer balances with denial rates.',
+      page: '/',
+      top: '180px',
+      left: '370px'
+    },
+    {
+      title: 'Front Desk Roster',
+      description: 'Manage patient check-in, point-of-service copay collections, and intake eligibility verification.',
       page: '/appointments',
-      description:
-        'Front-of-the-house revenue cycle starts at intake. Check patients in, verify active commercial & Medicaid coverage, calculate estimated copays on the fly, and collect point-of-service payments to prevent downstream patient bad debt.',
-      highlights: [
-        'Instant 270/271 EDI benefit checking with deductible breakdown',
-        'Collect copay in one click with automated invoice receipts',
-        'Inpatient rounds scheduling with provider encounter tracking'
-      ]
+      top: '140px',
+      left: '280px'
     },
     {
-      title: 'Claims Engine & Deep Claim Inspector',
-      badge: 'Billing Operations (3/4)',
-      icon: FileText,
+      title: 'Inpatient Rounding',
+      description: 'Track daily physician rounding, hospital encounters, and synchronize billing codes directly to claims.',
+      page: '/rounds',
+      top: '180px',
+      left: '280px'
+    },
+    {
+      title: 'Real-Time Eligibility',
+      description: 'Run instant 270/271 benefit checks with complete deductible, out-of-pocket, and copay breakdowns.',
+      page: '/eligibility',
+      top: '220px',
+      left: '280px'
+    },
+    {
+      title: 'Claims Pipeline',
+      description: 'Explore the dense 1,546-row claim repository with multi-dimensional filtering and instant search.',
       page: '/claims',
-      description:
-        'Manage dense claim pipelines with multi-dimensional filters. Drill into any claim to inspect all 7 tabs: Patient Demographics, ICD-10 & CPT Service Lines, 835 Remittance adjustments, Other historical claims, and actionable Denial tasks.',
-      highlights: [
-        'Dense data grid of 1,546 real synthetic claims with instant filtering',
-        'Try inspecting clm-1002 to test resolving a live CARC denial task',
-        'Automated work queues flagging provider coding errors and timely filing'
-      ]
+      top: '260px',
+      left: '280px'
     },
     {
-      title: 'Reconciliation, Reports & Developer API',
-      badge: 'Financial Intelligence (4/4)',
-      icon: Code2,
+      title: 'Deep Claim Inspector',
+      description: 'Inspect service lines, ICD-10 diagnostics, CPT codes, remits, and actionable denial remediation.',
+      page: '/claims/clm-1002',
+      top: '280px',
+      left: '370px'
+    },
+    {
+      title: 'Denial Management',
+      description: 'Resolve clearinghouse rejections and CARC/RARC payer denials with interactive one-click workflows.',
+      page: '/claims/clm-1002',
+      top: '340px',
+      left: '420px'
+    },
+    {
+      title: 'Revenue Leakage Queues',
+      description: 'Automated worklists flagging timely filing deadlines, coding anomalies, and missing clinic info.',
+      page: '/queues',
+      top: '300px',
+      left: '280px'
+    },
+    {
+      title: 'Prior Authorizations',
+      description: 'Monitor insurer authorization statuses, validity windows, approved units, and attached claims.',
+      page: '/prior-auth',
+      top: '340px',
+      left: '280px'
+    },
+    {
+      title: 'ERA 835 Remittances',
+      description: 'Electronic check register linking payments, patient responsibility, and contractual adjustments.',
+      page: '/remits',
+      top: '380px',
+      left: '280px'
+    },
+    {
+      title: 'Patient Balances & Text Pay',
+      description: 'Track post-adjudication patient balances and send SMS payment text invoices directly.',
+      page: '/collections',
+      top: '420px',
+      left: '280px'
+    },
+    {
+      title: 'Financial Reports & A/R',
+      description: 'A/R aging buckets, cashflow graphs, payer performance matrices, and natural language query bar.',
+      page: '/reports',
+      top: '140px',
+      left: '370px'
+    },
+    {
+      title: 'Developer Portal',
+      description: 'Manage API keys and download the full synthetic RCM dataset ZIP with claims and patient records.',
       page: '/developers',
-      description:
-        'Automate financial reconciliation with 835 ERA check registers, generate patient payment text invoices, view A/R aging buckets, and export the entire synthetic RCM dataset with one click.',
-      highlights: [
-        'Electronic Remittance Advice ledger with 50 check records',
-        'Developer portal with API key management and full CSV data export',
-        'Switch demo personas at the top to see tailored role workflows'
-      ]
+      top: '520px',
+      left: '280px'
+    },
+    {
+      title: 'Role-Based Personas',
+      description: 'Use the floating persona dock at the bottom right to switch views between Front Desk, Biller, and Admin.',
+      page: '/',
+      top: '500px',
+      left: '370px'
     }
   ];
 
   if (!tourOpen) return null;
 
   const current = steps[step];
-  const Icon = current.icon;
 
   const handleNext = () => {
     if (step < steps.length - 1) {
-      setStep(step + 1);
+      const nextStep = step + 1;
+      setStep(nextStep);
+      if (steps[nextStep].page !== current.page) {
+        router.push(steps[nextStep].page);
+      }
     } else {
       setTourOpen(false);
       setStep(0);
@@ -91,95 +136,85 @@ export default function TourGuide() {
 
   const handlePrev = () => {
     if (step > 0) {
-      setStep(step - 1);
+      const prevStep = step - 1;
+      setStep(prevStep);
+      if (steps[prevStep].page !== current.page) {
+        router.push(steps[prevStep].page);
+      }
     }
   };
 
-  const handleJump = () => {
-    setTourOpen(false);
-    router.push(current.page);
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+    <>
+      {/* Tour popover box */}
       <div
-        className="w-full max-w-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()}
+        className="driver-popover taiga-product-tour driver-popover-side-over driver-popover-align-start"
+        id="driver-popover-content"
+        role="dialog"
+        aria-labelledby="driver-popover-title"
+        aria-describedby="driver-popover-description"
+        style={{
+          display: 'block',
+          position: 'fixed',
+          top: current.top,
+          left: current.left,
+          zIndex: 10000
+        }}
       >
-        {/* Header */}
-        <div className="p-5 border-b border-neutral-100 dark:border-neutral-800 flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
-              <Icon className="size-5" />
-            </div>
-            <div>
-              <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-                {current.badge}
-              </span>
-              <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                {current.title}
-              </h2>
-            </div>
-          </div>
-          <button
-            onClick={() => setTourOpen(false)}
-            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 p-1 rounded-md"
-          >
-            <X className="size-4" />
-          </button>
+        <button
+          type="button"
+          onClick={() => {
+            setTourOpen(false);
+            setStep(0);
+          }}
+          className="driver-popover-close-btn"
+          aria-label="Close"
+          style={{ display: 'block' }}
+        >
+          ×
+        </button>
+        <div className="driver-popover-arrow driver-popover-arrow-none" />
+        <header
+          id="driver-popover-title"
+          className="driver-popover-title"
+          style={{ display: 'block' }}
+        >
+          {current.title}
+        </header>
+        <div
+          id="driver-popover-description"
+          className="driver-popover-description"
+          style={{ display: 'block' }}
+        >
+          {current.description}
         </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-4">
-          <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
-            {current.description}
-          </p>
-
-          <div className="bg-neutral-50 dark:bg-neutral-850 border border-neutral-200/80 dark:border-neutral-800 rounded-xl p-3.5 space-y-2">
-            <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">
-              Key Capabilities:
-            </span>
-            <ul className="space-y-1.5">
-              {current.highlights.map((h, i) => (
-                <li key={i} className="text-xs text-neutral-700 dark:text-neutral-300 flex items-start gap-2">
-                  <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                  <span>{h}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Footer controls */}
-        <div className="p-4 bg-neutral-50 dark:bg-neutral-850 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between gap-3">
-          <button
-            onClick={handleJump}
-            className="text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
-          >
-            <span>Open this view</span>
-            <ChevronRight className="size-3" />
-          </button>
-
-          <div className="flex items-center gap-2">
-            {step > 0 && (
-              <button
-                onClick={handlePrev}
-                className="px-3 py-1.5 text-xs text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors flex items-center gap-1 font-medium"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span>Back</span>
-              </button>
-            )}
+        <footer className="driver-popover-footer" style={{ display: 'flex' }}>
+          <span className="driver-popover-progress-text" style={{ display: 'block' }}>
+            {step + 1} of {steps.length}
+          </span>
+          <span className="driver-popover-navigation-btns">
             <button
-              onClick={handleNext}
-              className="px-4 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg transition-colors flex items-center gap-1 shadow-xs"
+              type="button"
+              onClick={handlePrev}
+              disabled={step === 0}
+              className={`driver-popover-prev-btn driver-popover-footer-btn ${
+                step === 0 ? 'driver-popover-btn-disabled' : ''
+              }`}
+              style={{ display: 'block' }}
             >
-              <span>{step === steps.length - 1 ? 'Finish Tour' : 'Next'}</span>
-              <ChevronRight className="size-3.5" />
+              Back
             </button>
-          </div>
-        </div>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="driver-popover-next-btn driver-popover-footer-btn"
+              style={{ display: 'block' }}
+            >
+              {step === steps.length - 1 ? 'Finish' : 'Next'}
+            </button>
+          </span>
+        </footer>
       </div>
-    </div>
+    </>
   );
 }

@@ -101,7 +101,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [personaRole, setPersonaRoleState] = useState<PersonaRole>('supervisor');
   const [tourOpen, setTourOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -149,7 +149,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Theme synchronization
   useEffect(() => {
-    const isDark = localStorage.getItem('taiga_theme') === 'dark';
+    const saved = localStorage.getItem('taiga_theme');
+    const isDark = saved ? saved === 'dark' : true;
     if (isDark) {
       setTheme('dark');
       document.documentElement.classList.add('dark');

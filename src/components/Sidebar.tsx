@@ -6,98 +6,83 @@ import { usePathname } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import {
   Gauge,
-  Users,
+  UserRound,
   Stethoscope,
   ShieldCheck,
-  BarChart3,
+  BarChart2,
   FileText,
   Layers,
   KeyRound,
-  Receipt,
-  CircleDollarSign,
+  FileCheck,
+  DollarSign,
   Compass,
   Code2,
+  HelpCircle,
   LifeBuoy,
   Settings2,
   Search,
   Sun,
   Moon,
-  ChevronLeft,
-  ChevronRight,
-  HelpCircle
+  PanelLeftClose,
+  PanelLeft
 } from 'lucide-react';
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { theme, toggleTheme, setTourOpen, setCommandPaletteOpen, persona } = useApp();
+  const { theme, toggleTheme, setTourOpen, setCommandPaletteOpen, persona, tickets } = useApp();
   const [collapsed, setCollapsed] = useState(false);
 
   const practiceNav = [
-    { name: 'Overview', href: '/', icon: Gauge },
-    { name: 'Front Desk', href: '/appointments', icon: Users },
+    { name: 'Overview', href: '/', icon: Gauge, dataTour: 'overview' },
+    { name: 'Front Desk', href: '/appointments', icon: UserRound, dataTour: 'patients' },
     { name: 'Rounds', href: '/rounds', icon: Stethoscope },
     { name: 'Eligibility', href: '/eligibility', icon: ShieldCheck }
   ];
 
   const billingNav = [
-    { name: 'Reports', href: '/reports', icon: BarChart3 },
-    { name: 'Claims', href: '/claims', icon: FileText },
-    { name: 'Queues', href: '/queues', icon: Layers },
+    { name: 'Reports', href: '/reports', icon: BarChart2, dataTour: 'reports' },
+    { name: 'Claims', href: '/claims', icon: FileText, dataTour: 'claims' },
+    { name: 'Queues', href: '/queues', icon: Layers, dataTour: 'queues' },
     { name: 'Prior Auth', href: '/prior-auth', icon: KeyRound },
-    { name: 'Remits', href: '/remits', icon: Receipt },
-    { name: 'Patient Balances', href: '/collections', icon: CircleDollarSign }
+    { name: 'Remits', href: '/remits', icon: FileCheck },
+    { name: 'Patient Balances', href: '/collections', icon: DollarSign }
   ];
 
-  const footerNav = [
-    { name: 'Developers', href: '/developers', icon: Code2 },
-    { name: 'Help center', href: 'https://docs.taigabilling.com', icon: HelpCircle, external: true },
-    { name: 'Tickets', href: '/tickets', icon: LifeBuoy },
-    { name: 'Settings & configuration', href: '/settings', icon: Settings2 }
-  ];
+  const openTicketsCount = tickets.filter(t => t.status === 'Open').length || 3;
 
   return (
     <aside
-      className={`relative flex flex-col bg-neutral-50 dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transition-all duration-200 z-30 select-none ${
+      data-sidebar="sidebar"
+      className={`group peer hidden md:flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-200 z-30 select-none shrink-0 ${
         collapsed ? 'w-16' : 'w-64'
       }`}
     >
       {/* Top Clinic Branding */}
-      <div className="p-3 border-b border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 overflow-hidden group">
-          <div className="size-7 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center shrink-0 shadow-sm text-sm group-hover:bg-emerald-500 transition-colors">
+      <div className="p-3 pb-2 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 overflow-hidden group w-full">
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground shadow-xs">
             N
           </div>
           {!collapsed && (
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">
-                Northstar Family Health
-              </span>
-              <span className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">
-                Billing transparency
-              </span>
-            </div>
+            <span className="truncate text-sm font-medium text-sidebar-foreground">
+              Northstar Family Health
+            </span>
           )}
         </Link>
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 p-1 rounded-md hover:bg-neutral-200/50 dark:hover:bg-neutral-800 hidden sm:block"
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
-        </button>
       </div>
 
-      {/* Global Search trigger */}
-      <div className="p-2">
+      {/* Global Search button */}
+      <div className="px-3 py-1.5" data-tour="search">
         <button
           onClick={() => setCommandPaletteOpen(true)}
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-neutral-500 dark:text-neutral-400 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xs hover:bg-neutral-100 dark:hover:bg-neutral-750 transition-colors"
+          aria-label="Open search"
+          className="flex min-h-9 w-full items-center justify-start gap-2 rounded-lg bg-background px-2.5 py-1.5 text-xs font-normal text-muted-foreground shadow-xs border border-border/80 hover:bg-muted hover:text-foreground transition-all cursor-pointer"
         >
-          <Search className="size-3.5 shrink-0 text-neutral-400" />
+          <Search className="size-3.5 shrink-0 text-muted-foreground" />
           {!collapsed && (
             <>
-              <span className="flex-1 text-left truncate">Search claims & patients</span>
-              <kbd className="px-1.5 py-0.5 text-[10px] bg-neutral-100 dark:bg-neutral-700 text-neutral-500 rounded border border-neutral-300 dark:border-neutral-600">
+              <span className="flex-1 text-left truncate">Search claims</span>
+              <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border border-border/80 bg-muted px-1.5 font-mono text-[9px] font-medium text-muted-foreground">
                 ⌘K
               </kbd>
             </>
@@ -106,11 +91,11 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation Sections */}
-      <div className="flex-1 overflow-y-auto px-2 py-2 space-y-4 text-xs font-medium">
+      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4 text-xs">
         {/* Practice Group */}
         <div>
           {!collapsed && (
-            <div className="px-2 pb-1 text-[11px] font-semibold tracking-wider text-neutral-400 dark:text-neutral-500 uppercase">
+            <div className="px-2 pb-1.5 text-[11px] font-semibold text-muted-foreground">
               Practice
             </div>
           )}
@@ -122,14 +107,15 @@ export default function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors ${
+                  data-tour={item.dataTour}
+                  className={`peer/menu-button group/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-1.5 text-left transition-colors duration-150 h-8 text-sm ${
                     isActive
-                      ? 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold shadow-xs'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-neutral-200'
-                  }`}
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                      : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                  } ${collapsed ? 'justify-center px-0' : ''}`}
                   title={item.name}
                 >
-                  <Icon className={`size-4 shrink-0 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-neutral-500'}`} />
+                  <Icon className={`size-4 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
                   {!collapsed && <span className="truncate">{item.name}</span>}
                 </Link>
               );
@@ -140,7 +126,7 @@ export default function Sidebar() {
         {/* Billing Group */}
         <div>
           {!collapsed && (
-            <div className="px-2 pb-1 text-[11px] font-semibold tracking-wider text-neutral-400 dark:text-neutral-500 uppercase">
+            <div className="px-2 pb-1.5 text-[11px] font-semibold text-muted-foreground">
               Billing
             </div>
           )}
@@ -152,14 +138,15 @@ export default function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors ${
+                  data-tour={item.dataTour}
+                  className={`peer/menu-button group/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-1.5 text-left transition-colors duration-150 h-8 text-sm ${
                     isActive
-                      ? 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold shadow-xs'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/50 hover:text-neutral-900 dark:hover:text-neutral-200'
-                  }`}
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                      : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                  } ${collapsed ? 'justify-center px-0' : ''}`}
                   title={item.name}
                 >
-                  <Icon className={`size-4 shrink-0 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-neutral-500'}`} />
+                  <Icon className={`size-4 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
                   {!collapsed && <span className="truncate">{item.name}</span>}
                 </Link>
               );
@@ -167,81 +154,114 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        {/* Tour Guide Button */}
-        <div className="pt-2 border-t border-neutral-200/60 dark:border-neutral-800/60">
+        {/* Take a Tour */}
+        <div className="pt-2 border-t border-sidebar-border/60">
           <button
             onClick={() => setTourOpen(true)}
-            className="w-full flex items-center gap-2.5 px-2.5 py-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 rounded-lg text-xs transition-colors"
+            data-tour="tour-btn"
+            className={`peer/menu-button group/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-1.5 text-left text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors duration-150 h-8 text-sm cursor-pointer ${
+              collapsed ? 'justify-center px-0' : ''
+            }`}
           >
-            <Compass className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-            {!collapsed && <span>Take a Tour</span>}
+            <Compass className="size-4 shrink-0 text-muted-foreground" />
+            {!collapsed && <span className="truncate">Take a Tour</span>}
           </button>
         </div>
 
-        {/* Platform Footer Links */}
+        {/* Bottom Platform Links */}
         <div className="space-y-0.5">
-          {footerNav.map((item) => {
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
-            if (item.external) {
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2.5 px-2.5 py-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 rounded-lg text-xs transition-colors"
-                  title={item.name}
-                >
-                  <Icon className="size-3.5 shrink-0" />
-                  {!collapsed && <span className="truncate">{item.name}</span>}
-                </a>
-              );
-            }
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
-                  isActive
-                    ? 'bg-neutral-200/70 dark:bg-neutral-800 text-neutral-900 dark:text-white font-medium'
-                    : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 hover:text-neutral-800 dark:hover:text-neutral-200'
-                }`}
-                title={item.name}
-              >
-                <Icon className="size-3.5 shrink-0" />
-                {!collapsed && <span className="truncate">{item.name}</span>}
-              </Link>
-            );
-          })}
+          <Link
+            href="/developers"
+            className={`peer/menu-button group/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-1.5 text-left h-8 text-sm transition-colors duration-150 ${
+              pathname === '/developers'
+                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+            } ${collapsed ? 'justify-center px-0' : ''}`}
+            title="Developers"
+          >
+            <Code2 className="size-4 shrink-0 text-muted-foreground" />
+            {!collapsed && <span className="truncate">Developers</span>}
+          </Link>
+
+          <a
+            href="https://docs.taigabilling.com"
+            target="_blank"
+            rel="noreferrer"
+            className={`peer/menu-button group/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-1.5 text-left h-8 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors duration-150 ${
+              collapsed ? 'justify-center px-0' : ''
+            }`}
+            title="Help center"
+          >
+            <HelpCircle className="size-4 shrink-0 text-muted-foreground" />
+            {!collapsed && <span className="truncate">Help center</span>}
+          </a>
+
+          <Link
+            href="/tickets"
+            className={`peer/menu-button group/menu-button flex w-full items-center justify-between gap-2 overflow-hidden rounded-md px-2 py-1.5 text-left h-8 text-sm transition-colors duration-150 ${
+              pathname === '/tickets'
+                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+            } ${collapsed ? 'justify-center px-0' : ''}`}
+            title="Tickets"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <LifeBuoy className="size-4 shrink-0 text-muted-foreground" />
+              {!collapsed && <span className="truncate">Tickets</span>}
+            </div>
+            {!collapsed && (
+              <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                {openTicketsCount}
+              </span>
+            )}
+          </Link>
+
+          <Link
+            href="/settings"
+            className={`peer/menu-button group/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-1.5 text-left h-8 text-sm transition-colors duration-150 ${
+              pathname === '/settings'
+                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+            } ${collapsed ? 'justify-center px-0' : ''}`}
+            title="Settings & configuration"
+          >
+            <Settings2 className="size-4 shrink-0 text-muted-foreground" />
+            {!collapsed && <span className="truncate">Settings & configuration</span>}
+          </Link>
         </div>
       </div>
 
       {/* User Footer Profile & Theme Toggle */}
-      <div className="p-2 border-t border-neutral-200/80 dark:border-neutral-800/80 flex items-center justify-between gap-2">
+      <div className="p-3 border-t border-sidebar-border/80 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="size-7 rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 font-semibold flex items-center justify-center shrink-0 text-xs">
-            {persona.avatar}
+          <div className="size-7 rounded-md bg-secondary text-secondary-foreground font-semibold flex items-center justify-center shrink-0 text-xs">
+            D
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-medium text-neutral-900 dark:text-neutral-100 truncate">
-                {persona.name}
-              </span>
-              <span className="text-[10px] text-neutral-500 truncate">
-                {persona.title}
+              <span className="text-xs font-medium text-sidebar-foreground truncate">
+                Demo visitor
               </span>
             </div>
           )}
         </div>
 
-        <button
-          onClick={toggleTheme}
-          className="p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-800 text-neutral-500 dark:text-neutral-400 transition-colors"
-          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} mode`}
-        >
-          {theme === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-md hover:bg-sidebar-accent text-muted-foreground hover:text-sidebar-foreground transition-colors cursor-pointer"
+            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} mode`}
+          >
+            {theme === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
+          </button>
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="p-1.5 rounded-md hover:bg-sidebar-accent text-muted-foreground hover:text-sidebar-foreground transition-colors cursor-pointer hidden md:block"
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <PanelLeft className="size-4" /> : <PanelLeftClose className="size-4" />}
+          </button>
+        </div>
       </div>
     </aside>
   );

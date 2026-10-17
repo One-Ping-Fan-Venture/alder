@@ -19,28 +19,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="h-full flex flex-col bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans">
+    <html lang="en" className="dark h-full antialiased" suppressHydrationWarning>
+      <body className="h-full bg-sidebar text-foreground overflow-hidden font-sans">
         <AppProvider>
-          {/* Top Demo Persona Banner */}
-          <PersonaBanner />
-
-          {/* Main App Workspace Shell */}
-          <div className="flex-1 flex overflow-hidden">
-            <Suspense fallback={<aside className="w-64 bg-neutral-50 dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800" />}>
+          {/* Main App Workspace Shell with Radix sidebar-inset card geometry */}
+          <div data-slot="sidebar-wrapper" className="group/sidebar-wrapper flex w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden">
+            <Suspense fallback={<aside className="w-64 bg-sidebar border-r border-sidebar-border hidden md:block" />}>
               <Sidebar />
             </Suspense>
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white dark:bg-neutral-900">
-              <Suspense fallback={<header className="h-14 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900" />}>
+            <main id="main-content" data-slot="sidebar-inset" className="relative flex w-full flex-1 flex-col md:m-2 md:ml-0 md:rounded-xl md:shadow-sm md:border md:border-border/80 bg-background overflow-hidden min-w-0">
+              <Suspense fallback={<header className="flex min-h-16 shrink-0 items-center justify-between px-4 border-b border-border/70" />}>
                 <Header />
               </Suspense>
-              <main className="flex-1 overflow-y-auto min-h-0 bg-neutral-50/50 dark:bg-neutral-900/50">
-                <Suspense fallback={<div className="p-8 text-xs text-neutral-400">Loading module...</div>}>
+              <div className="flex-1 overflow-y-auto min-h-0 bg-background">
+                <Suspense fallback={<div className="p-8 text-xs text-muted-foreground">Loading module...</div>}>
                   {children}
                 </Suspense>
-              </main>
-            </div>
+              </div>
+            </main>
           </div>
+
+          {/* Discreet Floating Persona Dock */}
+          <Suspense fallback={null}>
+            <PersonaBanner />
+          </Suspense>
 
           {/* Global Modals & Dialogs */}
           <Suspense fallback={null}>

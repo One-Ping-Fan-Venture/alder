@@ -5,36 +5,27 @@ import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import {
   Search,
-  X,
-  FileText,
-  User,
-  ArrowRight,
   Gauge,
-  Users,
-  ShieldCheck,
-  BarChart3,
-  Layers,
+  FileText,
   KeyRound,
-  Receipt,
-  CircleDollarSign,
-  Settings2,
-  Code2
+  Stethoscope,
+  MapPin,
+  CheckCircle2,
+  Clock
 } from 'lucide-react';
-import StatusBadge from './StatusBadge';
 
-interface CommandItem {
+interface PaletteItem {
   id: string;
-  label: string;
-  sublabel?: string;
-  status?: string;
+  title: string;
+  subtitle?: string;
   href: string;
-  icon: any;
-  type: string;
+  icon: React.ComponentType<{ className?: string }>;
+  group: string;
 }
 
 export default function CommandPalette() {
   const router = useRouter();
-  const { commandPaletteOpen, setCommandPaletteOpen, claims, patients } = useApp();
+  const { commandPaletteOpen, setCommandPaletteOpen, claims } = useApp();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,182 +53,208 @@ export default function CommandPalette() {
     }
   }, [commandPaletteOpen]);
 
-  // Quick navigation items
-  const staticNav: CommandItem[] = useMemo(
-    () => [
-      { id: 'nav-overview', label: 'Overview Dashboard', href: '/', icon: Gauge, type: 'Page' },
-      { id: 'nav-appointments', label: 'Front Desk & Copays', href: '/appointments', icon: Users, type: 'Page' },
-      { id: 'nav-claims', label: 'Claims Management', href: '/claims', icon: FileText, type: 'Page' },
-      { id: 'nav-eligibility', label: 'Eligibility Check (270/271)', href: '/eligibility', icon: ShieldCheck, type: 'Page' },
-      { id: 'nav-reports', label: 'Reports & A/R Analytics', href: '/reports', icon: BarChart3, type: 'Page' },
-      { id: 'nav-queues', label: 'Work Queues', href: '/queues', icon: Layers, type: 'Page' },
-      { id: 'nav-prior-auth', label: 'Prior Authorization', href: '/prior-auth', icon: KeyRound, type: 'Page' },
-      { id: 'nav-remits', label: 'Remittances (835 ERA)', href: '/remits', icon: Receipt, type: 'Page' },
-      { id: 'nav-collections', label: 'Patient Balances', href: '/collections', icon: CircleDollarSign, type: 'Page' },
-      { id: 'nav-developers', label: 'Developer Portal & API', href: '/developers', icon: Code2, type: 'Page' },
-      { id: 'nav-settings', label: 'Settings & Providers', href: '/settings', icon: Settings2, type: 'Page' }
-    ],
-    []
-  );
+  // Default Quick Links
+  const quickLinks: PaletteItem[] = [
+    { id: 'goto-overview', title: 'Overview', href: '/', icon: Gauge, group: 'Go to' },
+    { id: 'goto-claims', title: 'Claims', href: '/claims', icon: FileText, group: 'Go to' },
+    { id: 'goto-prior-auth', title: 'Prior Auth', href: '/prior-auth', icon: KeyRound, group: 'Go to' },
+    { id: 'goto-providers', title: 'Providers', href: '/settings?tab=providers', icon: Stethoscope, group: 'Go to' },
+    { id: 'goto-facilities', title: 'Facilities', href: '/settings?tab=facilities', icon: MapPin, group: 'Go to' },
+    { id: 'claims-submitted', title: 'Submitted claims', href: '/claims?status=Submitted', icon: Clock, group: 'Claims' },
+    { id: 'claims-paid', title: 'Paid claims', href: '/claims?status=Paid', icon: CheckCircle2, group: 'Claims' },
+  ];
 
-  // Filtered results
-  const results: CommandItem[] = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) {
-      return staticNav.slice(0, 7);
-    }
-
-    // Match pages
-    const matchedPages = staticNav.filter((p) => p.label.toLowerCase().includes(q));
-
-    // Match claims
-    const matchedClaims: CommandItem[] = claims
+  // Dynamic filtered results
+  const filteredClaims = useMemo(() => {
+    if (!query.trim()) return [];
+    const q = query.toLowerCase();
+    return claims
       .filter(
-        (c) =>
+        c =>
           c.id.toLowerCase().includes(q) ||
           c.patientName.toLowerCase().includes(q) ||
           c.payer.toLowerCase().includes(q) ||
-          c.patientMrn.toLowerCase().includes(q)
+          (c.cptCode && c.cptCode.toLowerCase().includes(q))
       )
-      .slice(0, 10)
-      .map((c) => ({
-        id: c.id,
-        label: `${c.id} - ${c.patientName}`,
-        sublabel: `${c.payer} · $${c.billed.toFixed(2)} · ${c.serviceDate}`,
-        status: c.status,
-        href: `/claims/${c.id}`,
-        icon: FileText,
-        type: 'Claim'
-      }));
+      .slice(0, 8);
+  }, [claims, query]);
 
-    return [...matchedPages, ...matchedClaims];
-  }, [query, staticNav, claims]);
+  const allItems: PaletteItem[] = useMemo(() => {
+    if (!query.trim()) {
+      return quickLinks;
+    }
+    return filteredClaims.map(c => ({
+      id: c.id,
+      title: `${c.id} - ${c.patientName}`,
+      subtitle: `${c.payer} • $${c.billed.toFixed(2)} • ${c.status}`,
+      href: `/claims/${c.id}`,
+      icon: FileText,
+      group: 'Matching Claims'
+    }));
+  }, [query, filteredClaims, quickLinks]);
 
-  const handleSelect = (item: (typeof results)[0]) => {
-    setCommandPaletteOpen(false);
-    router.push(item.href);
-  };
-
+  // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev + 1) % results.length);
+      setSelectedIndex(prev => (prev < allItems.length - 1 ? prev + 1 : 0));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev - 1 + results.length) % results.length);
-    } else if (e.key === 'Enter' && results[selectedIndex]) {
+      setSelectedIndex(prev => (prev > 0 ? prev - 1 : allItems.length - 1));
+    } else if (e.key === 'Enter') {
       e.preventDefault();
-      handleSelect(results[selectedIndex]);
+      const selected = allItems[selectedIndex];
+      if (selected) {
+        setCommandPaletteOpen(false);
+        router.push(selected.href);
+      }
     }
   };
 
   if (!commandPaletteOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
+      {/* Backdrop */}
       <div
-        className="w-full max-w-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Search input header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
-          <Search className="size-4 text-neutral-400 shrink-0" />
+        className="fixed inset-0 bg-background/80 backdrop-blur-xs transition-opacity"
+        onClick={() => setCommandPaletteOpen(false)}
+      />
+
+      {/* Dialog Card */}
+      <div className="relative z-50 w-full max-w-md rounded-xl bg-popover text-popover-foreground shadow-2xl border border-border/80 overflow-hidden mx-4">
+        {/* Search Input Bar */}
+        <div className="flex items-center gap-2.5 px-3 py-2.5 border-b border-border/70">
+          <Search className="size-4 shrink-0 text-muted-foreground" />
           <input
             ref={inputRef}
             type="text"
             value={query}
-            onChange={(e) => {
+            onChange={e => {
               setQuery(e.target.value);
               setSelectedIndex(0);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Type a claim ID (e.g. clm-1001), patient name, or command..."
-            className="flex-1 bg-transparent text-sm text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none"
+            placeholder="Type to search claims, or jump to a page..."
+            className="w-full bg-transparent text-sm placeholder:text-muted-foreground outline-none"
           />
-          {query && (
-            <button
-              onClick={() => setQuery('')}
-              className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
-            >
-              <X className="size-3.5" />
-            </button>
-          )}
-          <button
-            onClick={() => setCommandPaletteOpen(false)}
-            className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200"
-          >
+          <kbd className="pointer-events-none inline-flex h-4 select-none items-center rounded border border-border/70 bg-muted px-1.5 font-mono text-[9px] font-medium text-muted-foreground">
             ESC
-          </button>
+          </kbd>
         </div>
 
-        {/* Results list */}
-        <div className="flex-1 overflow-y-auto p-2 divide-y divide-neutral-100 dark:divide-neutral-850">
-          {results.length === 0 ? (
-            <div className="p-8 text-center text-xs text-neutral-500">
-              No matching claims, patients, or pages found.
-            </div>
-          ) : (
-            results.map((item, index) => {
-              const isSelected = index === selectedIndex;
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => handleSelect(item)}
-                  onMouseEnter={() => setSelectedIndex(index)}
-                  className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
-                    isSelected
-                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-neutral-900 dark:text-white'
-                      : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/40 text-neutral-700 dark:text-neutral-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div
-                      className={`p-1.5 rounded-md ${
-                        isSelected
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500'
-                      }`}
-                    >
-                      <Icon className="size-4" />
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-medium truncate">{item.label}</span>
-                      {'sublabel' in item && (
-                        <span className="text-[11px] text-neutral-400 truncate">
-                          {item.sublabel}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    {'status' in item && item.status && (
-                      <StatusBadge status={item.status as string} size="sm" />
-                    )}
-                    <span className="text-[10px] text-neutral-400 uppercase tracking-wider font-semibold">
-                      {item.type}
-                    </span>
-                    <ArrowRight className="size-3 text-neutral-400" />
-                  </div>
+        {/* Results List */}
+        <div className="max-h-[360px] overflow-y-auto p-1.5 space-y-3">
+          {!query.trim() ? (
+            <>
+              {/* Go to Group */}
+              <div>
+                <div className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
+                  Go to
                 </div>
-              );
-            })
-          )}
-        </div>
+                <div className="space-y-0.5">
+                  {quickLinks
+                    .filter(item => item.group === 'Go to')
+                    .map((item, idx) => {
+                      const Icon = item.icon;
+                      const isSelected = selectedIndex === idx;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            setCommandPaletteOpen(false);
+                            router.push(item.href);
+                          }}
+                          className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs text-left transition-colors cursor-pointer ${
+                            isSelected
+                              ? 'bg-muted text-foreground font-medium'
+                              : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
+                          }`}
+                        >
+                          <Icon className="size-3.5 shrink-0" />
+                          <span className="truncate">{item.title}</span>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
 
-        {/* Footer shortcuts */}
-        <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-800/80 bg-neutral-50 dark:bg-neutral-850 text-[11px] text-neutral-400 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span>
-              Use <kbd className="px-1 bg-white dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded">↑</kbd>{' '}
-              <kbd className="px-1 bg-white dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded">↓</kbd> to navigate
-            </span>
-            <span>
-              <kbd className="px-1 bg-white dark:bg-neutral-700 border border-neutral-200 dark:border-neutral-600 rounded">↵</kbd> to select
-            </span>
-          </div>
-          <span>1,546 Claims Indexed</span>
+              {/* Claims Group */}
+              <div>
+                <div className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
+                  Claims
+                </div>
+                <div className="space-y-0.5">
+                  {quickLinks
+                    .filter(item => item.group === 'Claims')
+                    .map((item, idx) => {
+                      const offsetIdx = 5 + idx;
+                      const Icon = item.icon;
+                      const isSelected = selectedIndex === offsetIdx;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            setCommandPaletteOpen(false);
+                            router.push(item.href);
+                          }}
+                          className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs text-left transition-colors cursor-pointer ${
+                            isSelected
+                              ? 'bg-muted text-foreground font-medium'
+                              : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
+                          }`}
+                        >
+                          <Icon className="size-3.5 shrink-0" />
+                          <span className="truncate">{item.title}</span>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div>
+              <div className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
+                Matching claims ({allItems.length})
+              </div>
+              {allItems.length === 0 ? (
+                <div className="p-4 text-center text-xs text-muted-foreground">
+                  No matching claims or pages found.
+                </div>
+              ) : (
+                <div className="space-y-0.5">
+                  {allItems.map((item, idx) => {
+                    const isSelected = selectedIndex === idx;
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setCommandPaletteOpen(false);
+                          router.push(item.href);
+                        }}
+                        className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg text-xs text-left transition-colors cursor-pointer ${
+                          isSelected
+                            ? 'bg-muted text-foreground font-medium'
+                            : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <Icon className="size-3.5 shrink-0" />
+                          <div className="truncate">
+                            <span className="font-semibold text-foreground">{item.title}</span>
+                            {'subtitle' in item && item.subtitle && (
+                              <p className="text-[10px] text-muted-foreground truncate">{item.subtitle}</p>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
