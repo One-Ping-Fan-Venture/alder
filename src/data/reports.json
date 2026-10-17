@@ -1,0 +1,112 @@
+{
+  "kpis": {
+    "grossCollectionRate": "94.2%",
+    "netCollectionRate": "98.7%",
+    "daysInAR": "28.4 days",
+    "firstPassCleanClaimRate": "96.8%",
+    "denialRate": "0.6%",
+    "badDebtPercentage": "1.2%"
+  },
+  "agingBuckets": [
+    {
+      "bucket": "0-30 Days",
+      "payerAmount": 382400,
+      "patientAmount": 6200,
+      "total": 388600
+    },
+    {
+      "bucket": "31-60 Days",
+      "payerAmount": 114200,
+      "patientAmount": 2800,
+      "total": 117000
+    },
+    {
+      "bucket": "61-90 Days",
+      "payerAmount": 52300,
+      "patientAmount": 1100,
+      "total": 53400
+    },
+    {
+      "bucket": "91-120 Days",
+      "payerAmount": 31200,
+      "patientAmount": 450,
+      "total": 31650
+    },
+    {
+      "bucket": "120+ Days",
+      "payerAmount": 15954,
+      "patientAmount": 102,
+      "total": 16056
+    }
+  ],
+  "monthlyCollections": [
+    {
+      "month": "May 2026",
+      "billed": 940000,
+      "collected": 265000,
+      "adjustments": 610000
+    },
+    {
+      "month": "Jun 2026",
+      "billed": 980000,
+      "collected": 272000,
+      "adjustments": 635000
+    },
+    {
+      "month": "Jul 2026",
+      "billed": 995000,
+      "collected": 278000,
+      "adjustments": 648000
+    },
+    {
+      "month": "Aug 2026",
+      "billed": 1020000,
+      "collected": 284000,
+      "adjustments": 662000
+    },
+    {
+      "month": "Sep 2026",
+      "billed": 1010000,
+      "collected": 281000,
+      "adjustments": 655000
+    },
+    {
+      "month": "Oct 2026",
+      "billed": 1006100,
+      "collected": 287303,
+      "adjustments": 651000
+    }
+  ],
+  "denialsByCarc": [
+    {
+      "code": "CO-4",
+      "reason": "Modifier missing or inconsistent",
+      "count": 18,
+      "amount": 4200
+    },
+    {
+      "code": "CO-16",
+      "reason": "Claim lacks information",
+      "count": 14,
+      "amount": 3850
+    },
+    {
+      "code": "CO-18",
+      "reason": "Duplicate claim/service",
+      "count": 8,
+      "amount": 1920
+    },
+    {
+      "code": "CO-29",
+      "reason": "Time limit for filing expired",
+      "count": 3,
+      "amount": 840
+    },
+    {
+      "code": "CO-197",
+      "reason": "Precertification/authorization absent",
+      "count": 7,
+      "amount": 2100
+    }
+  ]
+}

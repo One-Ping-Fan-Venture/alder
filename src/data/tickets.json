@@ -1,0 +1,32 @@
+[
+  {
+    "id": "tkt-2041",
+    "title": "Aetna ERA auto-posting discrepancy on Check W-520012",
+    "status": "In Progress",
+    "priority": "High",
+    "createdAt": "Oct 16, 2026",
+    "assignee": "Danielle Ortiz (Taiga Support)",
+    "messagesCount": 3,
+    "lastMessage": "We identified the adjustment code mismatch and are reprocessing the ERA batch."
+  },
+  {
+    "id": "tkt-2038",
+    "title": "Add Dr. Hannah Cole to Cigna commercial roster",
+    "status": "Open",
+    "priority": "Normal",
+    "createdAt": "Oct 14, 2026",
+    "assignee": "Priya Shah (Taiga Credentialing)",
+    "messagesCount": 2,
+    "lastMessage": "Application submitted via CAQH; awaiting Cigna payer confirmation."
+  },
+  {
+    "id": "tkt-2025",
+    "title": "Export monthly reconciliation report for September 2026",
+    "status": "Resolved",
+    "priority": "Low",
+    "createdAt": "Oct 02, 2026",
+    "assignee": "Danielle Ortiz (Taiga Support)",
+    "messagesCount": 4,
+    "lastMessage": "The reconciliation export has been uploaded to your developer data archive."
+  }
+]

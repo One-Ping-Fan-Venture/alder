@@ -1,0 +1,58 @@
+[
+  {
+    "id": "pa-1048",
+    "authNumber": "PA-1048",
+    "patientName": "Amelia Ross",
+    "patientId": "pat-amelia-ross",
+    "serviceCode": "73721",
+    "serviceName": "MRI lower extremity joint without contrast",
+    "payer": "Blue Cross Blue Shield",
+    "plan": "Preferred PPO",
+    "status": "Needs information",
+    "submittedDate": "Aug 30, 2026",
+    "expirationDate": "Nov 30, 2026",
+    "notes": "Payer requested prior conservative treatment documentation (6 weeks physical therapy records)."
+  },
+  {
+    "id": "pa-1042",
+    "authNumber": "PA-1042",
+    "patientName": "Marcus Lee",
+    "patientId": "pat-marcus-lee",
+    "serviceCode": "97110",
+    "serviceName": "Therapeutic exercises, each 15 min",
+    "payer": "Aetna",
+    "plan": "Choice POS II",
+    "status": "Pending payer",
+    "submittedDate": "Aug 28, 2026",
+    "expirationDate": "Nov 28, 2026",
+    "notes": "Initial referral submitted with clinical treatment plan."
+  },
+  {
+    "id": "pa-1029",
+    "authNumber": "PA-1029",
+    "patientName": "Sofia Mendez",
+    "patientId": "pat-sofia-mendez",
+    "serviceCode": "97110",
+    "serviceName": "Physical Therapy Session",
+    "payer": "UnitedHealthcare",
+    "plan": "Navigate Plus",
+    "status": "Approved",
+    "submittedDate": "Aug 21, 2026",
+    "expirationDate": "Feb 21, 2027",
+    "notes": "Authorized 12 visits under auth #UHC-8819204."
+  },
+  {
+    "id": "pa-1015",
+    "authNumber": "PA-1015",
+    "patientName": "David Kim",
+    "patientId": "pat-david-kim",
+    "serviceCode": "99215",
+    "serviceName": "Complex Specialty Consultation",
+    "payer": "Aetna",
+    "plan": "Choice POS II",
+    "status": "Approved",
+    "submittedDate": "Aug 15, 2026",
+    "expirationDate": "Nov 15, 2026",
+    "notes": "Authorized under referral #AET-771920."
+  }
+]

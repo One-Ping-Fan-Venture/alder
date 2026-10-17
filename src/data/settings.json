@@ -1,0 +1,187 @@
+{
+  "practice": {
+    "name": "Northstar Family Health",
+    "taxId": "93-4819201",
+    "groupNpi": "1982744321",
+    "ptan": "OR88910",
+    "primaryAddress": "1040 NW 22nd Ave, Suite 300, Portland, OR 97210",
+    "phone": "(503) 555-0100",
+    "email": "billing@northstarfamilyhealth.com"
+  },
+  "providers": [
+    {
+      "id": "prv-1",
+      "name": "Priya Nair, MD",
+      "npi": "1740250123",
+      "type": "Individual",
+      "specialty": "Family Medicine",
+      "taxId": "93-4819201",
+      "status": "Active"
+    },
+    {
+      "id": "prv-2",
+      "name": "Samuel Ortiz, DO",
+      "npi": "1659380777",
+      "type": "Individual",
+      "specialty": "Internal Medicine",
+      "taxId": "93-4819201",
+      "status": "Active"
+    },
+    {
+      "id": "prv-3",
+      "name": "Hannah Cole, MD",
+      "npi": "1295771044",
+      "type": "Individual",
+      "specialty": "Pediatrics",
+      "taxId": "93-4819201",
+      "status": "Active"
+    }
+  ],
+  "facilities": [
+    {
+      "id": "fac-1",
+      "name": "Northstar Family Health - Main",
+      "pos": "11 - Office",
+      "npi": "1982744321",
+      "address": "1040 NW 22nd Ave, Portland, OR 97210",
+      "clia": "38D2094182"
+    },
+    {
+      "id": "fac-2",
+      "name": "Northstar Urgent Care Annex",
+      "pos": "20 - Urgent Care",
+      "npi": "1982744322",
+      "address": "450 Beaverton-Hillsdale Hwy, Beaverton, OR 97005",
+      "clia": "38D9910244"
+    }
+  ],
+  "credentialing": [
+    {
+      "payer": "Aetna",
+      "status": "In-Network",
+      "effectiveDate": "Jan 01, 2024",
+      "renewalDate": "Jan 01, 2027",
+      "providerCount": 3
+    },
+    {
+      "payer": "Blue Cross Blue Shield",
+      "status": "In-Network",
+      "effectiveDate": "Mar 15, 2023",
+      "renewalDate": "Mar 15, 2026",
+      "providerCount": 3
+    },
+    {
+      "payer": "Cigna",
+      "status": "In-Network",
+      "effectiveDate": "Jun 01, 2024",
+      "renewalDate": "Jun 01, 2027",
+      "providerCount": 3
+    },
+    {
+      "payer": "UnitedHealthcare",
+      "status": "In-Network",
+      "effectiveDate": "Feb 01, 2024",
+      "renewalDate": "Feb 01, 2027",
+      "providerCount": 3
+    },
+    {
+      "payer": "Oregon Health Plan (Medicaid)",
+      "status": "In-Network",
+      "effectiveDate": "Jul 01, 2023",
+      "renewalDate": "Jul 01, 2026",
+      "providerCount": 3
+    }
+  ],
+  "contracts": [
+    {
+      "payer": "Aetna",
+      "contractCode": "AET-COMM-2025",
+      "feeSchedule": "125% of RBRVS 2024",
+      "timelyFilingDays": 90,
+      "appealWindowDays": 180
+    },
+    {
+      "payer": "Blue Cross Blue Shield",
+      "contractCode": "BCBS-PPO-2024",
+      "feeSchedule": "130% of RBRVS 2024",
+      "timelyFilingDays": 365,
+      "appealWindowDays": 180
+    },
+    {
+      "payer": "Cigna",
+      "contractCode": "CG-OPEN-2025",
+      "feeSchedule": "120% of RBRVS 2024",
+      "timelyFilingDays": 90,
+      "appealWindowDays": 90
+    },
+    {
+      "payer": "UnitedHealthcare",
+      "contractCode": "UHC-CHOICE-2025",
+      "feeSchedule": "122% of RBRVS 2024",
+      "timelyFilingDays": 90,
+      "appealWindowDays": 180
+    }
+  ],
+  "feeSchedules": [
+    {
+      "cpt": "99213",
+      "description": "Office visit est low",
+      "rvu": 1.3,
+      "chargemaster": 190.0,
+      "aetnaAllowable": 130.0,
+      "bcbsAllowable": 138.0,
+      "uhcAllowable": 128.0
+    },
+    {
+      "cpt": "99214",
+      "description": "Office visit est mod",
+      "rvu": 1.92,
+      "chargemaster": 285.0,
+      "aetnaAllowable": 192.0,
+      "bcbsAllowable": 204.0,
+      "uhcAllowable": 188.0
+    },
+    {
+      "cpt": "99215",
+      "description": "Office visit est high",
+      "rvu": 2.8,
+      "chargemaster": 380.0,
+      "aetnaAllowable": 260.0,
+      "bcbsAllowable": 275.0,
+      "uhcAllowable": 252.0
+    },
+    {
+      "cpt": "99203",
+      "description": "Office visit new low",
+      "rvu": 1.65,
+      "chargemaster": 260.0,
+      "aetnaAllowable": 175.0,
+      "bcbsAllowable": 185.0,
+      "uhcAllowable": 170.0
+    },
+    {
+      "cpt": "99204",
+      "description": "Office visit new mod",
+      "rvu": 2.45,
+      "chargemaster": 370.0,
+      "aetnaAllowable": 250.0,
+      "bcbsAllowable": 268.0,
+      "uhcAllowable": 245.0
+    }
+  ],
+  "bankReconciliation": {
+    "accountName": "Columbia Bank Operating Checking",
+    "accountNumber": "\u2022\u2022\u2022\u20224810",
+    "routingNumber": "123000220",
+    "autoMatch": true,
+    "unmatchedDeposits": 2,
+    "unmatchedAmount": 1420.5
+  },
+  "invoices": {
+    "sendTextInvoices": true,
+    "sendEmailStatements": true,
+    "gracePeriodDays": 14,
+    "lateNoticeCadenceDays": 30,
+    "minInvoiceAmount": 5.0
+  }
+}

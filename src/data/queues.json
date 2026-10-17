@@ -1,0 +1,74 @@
+[
+  {
+    "id": "q-provider-followup",
+    "name": "Provider follow-up",
+    "description": "Claims waiting on documentation or a coding answer from the provider.",
+    "totalClaims": 51,
+    "totalBalance": 43270.0,
+    "taigaReview": 0,
+    "clinicAction": 51,
+    "snoozedClaims": 11,
+    "snoozedBalance": 12500.0,
+    "sampleClaimId": "clm-1004"
+  },
+  {
+    "id": "q-coding-validation",
+    "name": "Coding Validation Errors",
+    "description": "Claims that do not pass NCCI edits or LCD/NCD coding validations.",
+    "totalClaims": 18,
+    "totalBalance": 14200.0,
+    "taigaReview": 12,
+    "clinicAction": 6,
+    "snoozedClaims": 2,
+    "snoozedBalance": 1800.0,
+    "sampleClaimId": "clm-1002"
+  },
+  {
+    "id": "q-stale-claims",
+    "name": "Stale Claims & Timely Filing",
+    "description": "Claims unadjudicated past 45 days requiring payer outreach.",
+    "totalClaims": 34,
+    "totalBalance": 38940.0,
+    "taigaReview": 28,
+    "clinicAction": 6,
+    "snoozedClaims": 5,
+    "snoozedBalance": 4200.0,
+    "sampleClaimId": "clm-1003"
+  },
+  {
+    "id": "q-clearinghouse-rejections",
+    "name": "Clearinghouse Rejections",
+    "description": "EDI 277 rejections (invalid member ID, missing NPI, incorrect payer ID).",
+    "totalClaims": 24,
+    "totalBalance": 19800.0,
+    "taigaReview": 8,
+    "clinicAction": 16,
+    "snoozedClaims": 0,
+    "snoozedBalance": 0.0,
+    "sampleClaimId": "clm-1007"
+  },
+  {
+    "id": "q-denials-appeal",
+    "name": "Payer Denials & Appeals",
+    "description": "Adjudicated CARC denials requiring medical necessity appeals or redetermination.",
+    "totalClaims": 9,
+    "totalBalance": 7650.0,
+    "taigaReview": 5,
+    "clinicAction": 4,
+    "snoozedClaims": 1,
+    "snoozedBalance": 850.0,
+    "sampleClaimId": "clm-1002"
+  },
+  {
+    "id": "q-patient-hold",
+    "name": "Held by Customer / Clinic Action",
+    "description": "Claims held by front-office request pending billing policy reviews.",
+    "totalClaims": 14,
+    "totalBalance": 11300.0,
+    "taigaReview": 0,
+    "clinicAction": 14,
+    "snoozedClaims": 3,
+    "snoozedBalance": 2400.0,
+    "sampleClaimId": "clm-1009"
+  }
+]
