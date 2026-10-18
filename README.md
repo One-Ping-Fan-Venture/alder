@@ -62,8 +62,8 @@ Built as a **zero-backend demo application** using **Next.js 16 (App Router)**, 
 
 ```bash
 # Clone the repository
-git clone https://github.com/One-Ping-Fan-Venture/health-care-RCM.git
-cd health-care-RCM
+git clone https://github.com/One-Ping-Fan-Venture/alder.git
+cd alder
 
 # Install dependencies
 npm install
@@ -103,7 +103,7 @@ npm start
 ## 📁 Repository Structure
 
 ```
-health-care-RCM/
+alder/
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx            # Global layout with AppProvider, PersonaBanner, Shell
