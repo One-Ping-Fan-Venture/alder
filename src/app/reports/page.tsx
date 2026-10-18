@@ -50,7 +50,7 @@ export default function ReportsPage() {
     const q = text.trim();
     if (!q) return;
     setQuery(q);
-    setAnswer(`Taiga pulled a report for “${q}” from the demo book. Billing data syncs periodically, so figures may be a little out of date.`);
+    setAnswer(`Alder pulled a report for “${q}” from the demo book. Billing data syncs periodically, so figures may be a little out of date.`);
   };
 
   return (
@@ -67,9 +67,9 @@ export default function ReportsPage() {
 
       <section className="rounded-xl border border-border/80 bg-card p-5 space-y-4">
         <div>
-          <h2 className="text-sm font-semibold">Ask Taiga about your billing</h2>
+          <h2 className="text-sm font-semibold">Ask Alder about your billing</h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Ask in plain English. Taiga pulls the numbers from your claims and puts together a report.
+            Ask in plain English. Alder pulls the numbers from your claims and puts together a report.
           </p>
         </div>
         <form
@@ -82,7 +82,7 @@ export default function ReportsPage() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ask Taiga about your billing"
+            placeholder="Ask Alder about your billing"
             className="flex-1 rounded-lg border border-border/80 bg-background px-3 py-2 text-sm"
           />
           <button

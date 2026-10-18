@@ -195,7 +195,7 @@ export default function CollectionsPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">Taiga Pay & SMS Billing</span>
+              <span className="text-sm font-semibold text-foreground">Alder Pay & SMS Billing</span>
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                 ACTIVE
               </span>
@@ -315,7 +315,7 @@ export default function CollectionsPage() {
                   Hi {selectedPatient.patient.split(' ')[0]}, you have an outstanding patient balance of{' '}
                   <strong className="text-foreground">${selectedPatient.owes.toFixed(2)}</strong> for your clinical visit on {selectedPatient.dos} with Northstar Family Health. Pay in 30 seconds via secure payment link:{' '}
                   <span className="text-primary underline">
-                    https://pay.taiga.link/inv-4819
+                    https://pay.alder.link/inv-4819
                   </span>
                 </p>
               </div>

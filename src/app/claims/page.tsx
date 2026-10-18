@@ -124,7 +124,7 @@ export default function ClaimsPage() {
             </h1>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Every claim Taiga has touched, with current status and money flowing through. This view is read-only; our ops team works the queue on your behalf.
+            Every claim Alder has touched, with current status and money flowing through. This view is read-only; our ops team works the queue on your behalf.
           </p>
         </div>
 
@@ -241,7 +241,7 @@ export default function ClaimsPage() {
           >
             <option value="all">Any owner</option>
             <option value="clinic">Clinic Action</option>
-            <option value="taiga">Taiga Ops</option>
+            <option value="alder">Alder Ops</option>
             <option value="payer">Payer</option>
           </select>
 
@@ -514,7 +514,7 @@ export default function ClaimsPage() {
                           className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                             claim.responsibility === 'Clinic'
                               ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                              : claim.responsibility === 'Taiga'
+                              : claim.responsibility === 'Alder'
                               ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
                               : claim.responsibility === 'Payer'
                               ? 'bg-sky-500/15 text-sky-300 border border-sky-500/30'

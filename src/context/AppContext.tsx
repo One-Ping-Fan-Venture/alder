@@ -118,7 +118,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const [claims, setClaims] = useState<Claim[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('taiga_rcm_claims_v2');
+      const saved = localStorage.getItem('alder_rcm_claims_v2');
       if (saved) {
         try { return JSON.parse(saved); } catch (e) { /* ignore */ }
       }
@@ -128,7 +128,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('taiga_rcm_appointments_v2');
+      const saved = localStorage.getItem('alder_rcm_appointments_v2');
       if (saved) {
         try { return JSON.parse(saved); } catch (e) { /* ignore */ }
       }
@@ -176,7 +176,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Theme synchronization
   useEffect(() => {
-    const saved = localStorage.getItem('taiga_theme');
+    const saved = localStorage.getItem('alder_theme');
     const isDark = saved === 'dark';
     if (isDark) {
       setTheme('dark');
@@ -192,10 +192,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const next = prev === 'light' ? 'dark' : 'light';
       if (next === 'dark') {
         document.documentElement.classList.add('dark');
-        localStorage.setItem('taiga_theme', 'dark');
+        localStorage.setItem('alder_theme', 'dark');
       } else {
         document.documentElement.classList.remove('dark');
-        localStorage.setItem('taiga_theme', 'light');
+        localStorage.setItem('alder_theme', 'light');
       }
       return next;
     });
@@ -232,7 +232,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return c;
       });
       if (typeof window !== 'undefined') {
-        localStorage.setItem('taiga_rcm_claims_v2', JSON.stringify(updated));
+        localStorage.setItem('alder_rcm_claims_v2', JSON.stringify(updated));
       }
       return updated;
     });
@@ -252,7 +252,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return a;
       });
       if (typeof window !== 'undefined') {
-        localStorage.setItem('taiga_rcm_appointments_v2', JSON.stringify(updated));
+        localStorage.setItem('alder_rcm_appointments_v2', JSON.stringify(updated));
       }
       return updated;
     });
@@ -266,7 +266,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setAppointments(prev => {
       const updated = [newA, ...prev];
       if (typeof window !== 'undefined') {
-        localStorage.setItem('taiga_rcm_appointments_v2', JSON.stringify(updated));
+        localStorage.setItem('alder_rcm_appointments_v2', JSON.stringify(updated));
       }
       return updated;
     });
@@ -297,7 +297,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       priority,
       status: 'Open',
       createdAt: 'Oct 17, 2026',
-      assignee: 'Taiga Support Team',
+      assignee: 'Alder Support Team',
       messagesCount: 1,
       lastMessage: details
     };
@@ -306,8 +306,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const resetDemoData = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('taiga_rcm_claims_v2');
-      localStorage.removeItem('taiga_rcm_appointments_v2');
+      localStorage.removeItem('alder_rcm_claims_v2');
+      localStorage.removeItem('alder_rcm_appointments_v2');
     }
     setClaims(initialClaims as unknown as Claim[]);
     setAppointments(initialAppointments as unknown as Appointment[]);

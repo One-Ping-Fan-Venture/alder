@@ -40,7 +40,8 @@ export default function Header() {
   const pageTitle = TITLES[segments[0] || ''] || 'Overview';
 
   useEffect(() => {
-    document.title = segments.length > 1 && segments[0] === 'claims' ? 'Claim' : pageTitle;
+    const title = segments.length > 1 && segments[0] === 'claims' ? 'Claim' : pageTitle;
+    document.title = `${title} · Alder`;
   }, [pageTitle, segments]);
 
   return (

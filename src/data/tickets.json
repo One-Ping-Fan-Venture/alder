@@ -5,7 +5,7 @@
     "status": "In Progress",
     "priority": "High",
     "createdAt": "Oct 16, 2026",
-    "assignee": "Danielle Ortiz (Taiga Support)",
+    "assignee": "Danielle Ortiz (Alder Support)",
     "messagesCount": 3,
     "lastMessage": "We identified the adjustment code mismatch and are reprocessing the ERA batch."
   },
@@ -15,7 +15,7 @@
     "status": "Open",
     "priority": "Normal",
     "createdAt": "Oct 14, 2026",
-    "assignee": "Priya Shah (Taiga Credentialing)",
+    "assignee": "Priya Shah (Alder Credentialing)",
     "messagesCount": 2,
     "lastMessage": "Application submitted via CAQH; awaiting Cigna payer confirmation."
   },
@@ -25,7 +25,7 @@
     "status": "Resolved",
     "priority": "Low",
     "createdAt": "Oct 02, 2026",
-    "assignee": "Danielle Ortiz (Taiga Support)",
+    "assignee": "Danielle Ortiz (Alder Support)",
     "messagesCount": 4,
     "lastMessage": "The reconciliation export has been uploaded to your developer data archive."
   }

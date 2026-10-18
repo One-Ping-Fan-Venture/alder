@@ -1,6 +1,6 @@
-# Healthcare Revenue Cycle Management (RCM) — Taiga Billing Clone
+# Alder
 
-A high-fidelity, interactive healthcare Revenue Cycle Management (RCM) platform cloned from [Taiga Billing](https://demo.taigabilling.com/).
+A healthcare revenue cycle demo. Northstar Family Health is the clinic inside the product. Screen flows follow the [Taiga Billing](https://demo.taigabilling.com/) demo.
 
 Built as a **zero-backend demo application** using **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS v4**, featuring an embedded dataset of **1,546 synthetic medical claims** and **268 patients**.
 
@@ -83,7 +83,7 @@ Sign-in is a local check against one account. The same username and password are
 | Username | `demo` |
 | Password | `N0rthstar#Billing2026!` |
 
-A successful sign-in stores a session in `localStorage` under `taiga_session`, so a refresh stays signed in. **Sign out** in the sidebar footer clears that session and returns to `/login`.
+A successful sign-in stores a session in `localStorage` under `alder_session`, so a refresh stays signed in. **Sign out** in the sidebar footer clears that session and returns to `/login`.
 
 ### Production Build
 

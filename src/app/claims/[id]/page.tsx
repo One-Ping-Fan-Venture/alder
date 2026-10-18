@@ -569,7 +569,7 @@ function ClaimDetailContent({ params }: { params: Promise<{ id: string }> }) {
                           <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 text-[11px] space-y-1.5">
                             <div className="flex items-center gap-1.5 font-semibold text-primary">
                               <Sparkles className="size-3 text-primary" />
-                              <span>Taiga Copilot Recommendation</span>
+                              <span>Alder Copilot Recommendation</span>
                             </div>
                             <p className="text-muted-foreground text-[10.5px]">
                               Found signed physician referral in EHR documents. Auto-attach to Box 17 and resubmit EDI 837P.

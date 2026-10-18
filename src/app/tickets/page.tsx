@@ -23,7 +23,7 @@ interface SupportTicket {
   created: string;
   lastActivity: string;
   status: 'Waiting on you' | 'Submitted' | 'In progress' | 'Resolved';
-  category: 'waiting' | 'taiga' | 'done';
+  category: 'waiting' | 'alder' | 'done';
   hasNewActivity?: boolean;
   messages: {
     sender: string;
@@ -34,7 +34,7 @@ interface SupportTicket {
 }
 
 export default function TicketsPage() {
-  const [activeTab, setActiveTab] = useState<'waiting' | 'taiga' | 'done'>('waiting');
+  const [activeTab, setActiveTab] = useState<'waiting' | 'alder' | 'done'>('waiting');
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -62,10 +62,10 @@ export default function TicketsPage() {
           sender: 'Priya Shah',
           isStaff: false,
           time: 'Oct 11 at 10:15 AM',
-          text: 'We noticed a deposit of $1,420.50 from UnitedHealthcare in our Columbia Bank account on Aug 12, but there is no 835 remit file matched in Taiga.'
+          text: 'We noticed a deposit of $1,420.50 from UnitedHealthcare in our Columbia Bank account on Aug 12, but there is no 835 remit file matched in Alder.'
         },
         {
-          sender: 'Austin Cooper (Taiga Clearinghouse Lead)',
+          sender: 'Austin Cooper (Alder Clearinghouse Lead)',
           isStaff: true,
           time: 'Oct 12 at 02:40 PM',
           text: 'Hi Priya, we checked Optum Clearinghouse for that trace number. UHC flagged this as an ERA that needs manual payer portal credential re-authentication. Could you upload the EOB voucher PDF from the UHC portal so we can ingest it directly?'
@@ -80,7 +80,7 @@ export default function TicketsPage() {
       created: 'Oct 15, 2026',
       lastActivity: '2d ago',
       status: 'Submitted',
-      category: 'taiga',
+      category: 'alder',
       hasNewActivity: true,
       messages: [
         {
@@ -90,7 +90,7 @@ export default function TicketsPage() {
           text: 'We hired Sarah Owens, NP (NPI 1492049182). We need her linked to Northstar Family Health active contracts across Aetna, BCBS, and OHP.'
         },
         {
-          sender: 'Austin Cooper (Taiga Specialist)',
+          sender: 'Austin Cooper (Alder Specialist)',
           isStaff: true,
           time: 'Oct 15 at 01:15 PM',
           text: 'Enrollment paperwork submitted to CAQH and Oregon Medicaid. Expecting payer roster updates within 5 business days.'
@@ -105,7 +105,7 @@ export default function TicketsPage() {
       created: 'Oct 13, 2026',
       lastActivity: '3d ago',
       status: 'In progress',
-      category: 'taiga',
+      category: 'alder',
       hasNewActivity: true,
       messages: [
         {
@@ -115,7 +115,7 @@ export default function TicketsPage() {
           text: 'Patient Amelia Ross (MEM-ROSS-01) returned 271 Inactive when run through real-time check, but her physical card is valid through Dec 2026.'
         },
         {
-          sender: 'Austin Cooper (Taiga Specialist)',
+          sender: 'Austin Cooper (Alder Specialist)',
           isStaff: true,
           time: 'Oct 14 at 10:00 AM',
           text: 'We re-queried Aetna via Availity EDI gateway with subscriber date of birth override; coverage is active and in-network. Clearinghouse cache cleared.'
@@ -140,7 +140,7 @@ export default function TicketsPage() {
           text: 'Can we include CARC denial codes and secondary payer columns in the standard weekly claims export?'
         },
         {
-          sender: 'Austin Cooper (Taiga Specialist)',
+          sender: 'Austin Cooper (Alder Specialist)',
           isStaff: true,
           time: 'Oct 6 at 09:10 AM',
           text: 'Done! Added CARC, RARC, and Secondary Payer columns to your clinic’s custom export schema.'
@@ -165,7 +165,7 @@ export default function TicketsPage() {
           text: 'Two 99214 claims were reimbursed at $89 instead of contracted $142 rate.'
         },
         {
-          sender: 'Austin Cooper (Taiga Specialist)',
+          sender: 'Austin Cooper (Alder Specialist)',
           isStaff: true,
           time: 'Oct 1 at 04:30 PM',
           text: 'Appealed to Cigna under Fee Schedule Dispute #49102. Payer issued reconciliation remit with $106 retroactive adjustment.'
@@ -175,7 +175,7 @@ export default function TicketsPage() {
   ]);
 
   const waitingCount = tickets.filter((t) => t.category === 'waiting').length;
-  const taigaCount = tickets.filter((t) => t.category === 'taiga').length;
+  const alderCount = tickets.filter((t) => t.category === 'alder').length;
   const doneCount = tickets.filter((t) => t.category === 'done').length;
 
   const filteredTickets = tickets.filter((t) => t.category === activeTab);
@@ -231,7 +231,7 @@ export default function TicketsPage() {
       created: 'Just now',
       lastActivity: 'Just now',
       status: 'Submitted',
-      category: 'taiga',
+      category: 'alder',
       hasNewActivity: true,
       messages: [
         {
@@ -247,7 +247,7 @@ export default function TicketsPage() {
     setSubject('');
     setDescription('');
     setIsNewRequestOpen(false);
-    setActiveTab('taiga');
+    setActiveTab('alder');
   };
 
   return (
@@ -292,14 +292,14 @@ export default function TicketsPage() {
           Waiting on you {waitingCount}
         </button>
         <button
-          onClick={() => setActiveTab('taiga')}
+          onClick={() => setActiveTab('alder')}
           className={`pb-2.5 transition-all relative ${
-            activeTab === 'taiga'
+            activeTab === 'alder'
               ? 'text-foreground font-semibold border-b-2 border-primary'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          With Taiga {taigaCount}
+          With Alder {alderCount}
         </button>
         <button
           onClick={() => setActiveTab('done')}
@@ -436,7 +436,7 @@ export default function TicketsPage() {
                 type="text"
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
-                placeholder="Type your reply to Taiga support..."
+                placeholder="Type your reply to Alder support..."
                 className="flex-1 px-3 py-2 bg-secondary/40 border border-border/80 rounded-lg text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
               />
               <button
