@@ -72,7 +72,18 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser. Unsigned visits go to `/login`.
+
+### Demo account
+
+Sign-in is a local check against one account. The same username and password are printed on the form.
+
+| Field | Value |
+| --- | --- |
+| Username | `demo` |
+| Password | `N0rthstar#Billing2026!` |
+
+A successful sign-in stores a session in `localStorage` under `taiga_session`, so a refresh stays signed in. **Sign out** in the sidebar footer clears that session and returns to `/login`.
 
 ### Production Build
 

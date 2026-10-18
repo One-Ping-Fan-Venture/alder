@@ -22,6 +22,7 @@ import initialPriorAuths from '@/data/prior_auth.json';
 import initialRemits from '@/data/remits.json';
 import initialSettings from '@/data/settings.json';
 import initialTickets from '@/data/tickets.json';
+import { clearSession, credentialsMatch, readSession, writeSession } from '@/lib/auth';
 
 export const PERSONAS: Record<PersonaRole, Persona> = {
   front_desk: {
@@ -98,6 +99,10 @@ interface AppContextType {
   revokeApiKey: (id: string) => void;
   addTicket: (title: string, priority: string, details: string) => void;
   resetDemoData: () => void;
+  authReady: boolean;
+  signedIn: boolean;
+  signIn: (username: string, password: string) => boolean;
+  signOut: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -108,6 +113,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [personaRole, setPersonaRoleState] = useState<PersonaRole>('supervisor');
   const [tourOpen, setTourOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
 
   const [claims, setClaims] = useState<Claim[]>(() => {
     if (typeof window !== 'undefined') {
@@ -149,6 +156,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   ]);
 
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets as unknown as Ticket[]);
+
+  useEffect(() => {
+    setSignedIn(readSession());
+    setAuthReady(true);
+  }, []);
+
+  const signIn = (username: string, password: string) => {
+    if (!credentialsMatch(username, password)) return false;
+    writeSession();
+    setSignedIn(true);
+    return true;
+  };
+
+  const signOut = () => {
+    clearSession();
+    setSignedIn(false);
+  };
 
   // Theme synchronization
   useEffect(() => {
@@ -317,7 +341,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         createApiKey,
         revokeApiKey,
         addTicket,
-        resetDemoData
+        resetDemoData,
+        authReady,
+        signedIn,
+        signIn,
+        signOut
       }}
     >
       {children}

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import {
   Gauge,
@@ -27,7 +27,8 @@ import {
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { theme, toggleTheme, setTourOpen, setCommandPaletteOpen, sidebarCollapsed: collapsed } = useApp();
+  const router = useRouter();
+  const { theme, toggleTheme, setTourOpen, setCommandPaletteOpen, sidebarCollapsed: collapsed, signOut } = useApp();
 
   const practiceNav = [
     { name: 'Overview', href: '/', icon: Gauge, dataTour: 'overview' },
@@ -243,6 +244,16 @@ export default function Sidebar() {
           )}
         </div>
 
+        <button
+          type="button"
+          onClick={() => {
+            signOut();
+            router.replace('/login');
+          }}
+          className="px-1.5 py-1 rounded-md text-[11px] text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
+        >
+          Sign out
+        </button>
         <button
           onClick={toggleTheme}
           aria-label="Change theme"
