@@ -252,8 +252,8 @@ export default function AppointmentsPage() {
 
           {/* Split Schedule View: Left Schedule Table, Right Detail Pane */}
           <p className="text-[11px] text-muted-foreground">All times Eastern</p>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-            <div className="lg:col-span-8 bg-card rounded-xl border border-border/80 overflow-hidden shadow-xs">
+          <div className="grid w-full min-w-0 grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] gap-5 items-start">
+            <div className="min-w-0 w-full bg-card rounded-xl border border-border/80 overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-secondary/40 border-b border-border text-muted-foreground font-medium">
@@ -308,7 +308,7 @@ export default function AppointmentsPage() {
             </div>
 
             {/* Right Detail Pane (~8 columns) */}
-            <div className="lg:col-span-4 space-y-4">
+            <div className="min-w-0 w-full space-y-4">
               {selectedAppt ? (
                 <>
                   {/* Action Toolbar */}

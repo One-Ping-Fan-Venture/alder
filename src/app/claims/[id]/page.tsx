@@ -175,7 +175,7 @@ function ClaimDetailContent({ params }: { params: Promise<{ id: string }> }) {
       </div>
 
       {/* 2-Column Split Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)] gap-5 items-start">
+      <div className="grid w-full min-w-0 grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)] gap-5 items-start">
         {/* Left Column: Tabbed Claim Details (~68% width) */}
         <div className="space-y-4 min-w-0">
           {/* Sub-tabs Navigation */}
