@@ -48,7 +48,7 @@ export default function Sidebar() {
     { name: 'Patient Balances', href: '/collections', icon: DollarSign }
   ];
 
-  const openTicketsCount = tickets.filter(t => t.status === 'Open').length || 3;
+  const openTicketsCount = 3;
 
   return (
     <aside
@@ -246,22 +246,13 @@ export default function Sidebar() {
           )}
         </div>
 
-        <div className="flex items-center gap-1">
-          <button
-            onClick={toggleTheme}
-            className="p-1.5 rounded-md hover:bg-sidebar-accent text-muted-foreground hover:text-sidebar-foreground transition-colors cursor-pointer"
-            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} mode`}
-          >
-            {theme === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
-          </button>
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-md hover:bg-sidebar-accent text-muted-foreground hover:text-sidebar-foreground transition-colors cursor-pointer hidden md:block"
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {collapsed ? <PanelLeft className="size-4" /> : <PanelLeftClose className="size-4" />}
-          </button>
-        </div>
+        <button
+          onClick={toggleTheme}
+          className="p-1.5 rounded-md hover:bg-sidebar-accent text-muted-foreground hover:text-sidebar-foreground transition-colors cursor-pointer"
+          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} mode`}
+        >
+          {theme === 'light' ? <Moon className="size-4" /> : <Moon className="size-4" />}
+        </button>
       </div>
     </aside>
   );
