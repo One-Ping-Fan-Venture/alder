@@ -11,7 +11,7 @@ export default function TourGuide() {
 
   const steps = [
     {
-      title: 'Welcome to Taiga',
+      title: 'Welcome to Alder',
       description: "Your billing home base. Let's take a proper lap. We'll open a real claim and a remit along the way.",
       page: '/',
       top: '420px',
@@ -148,7 +148,7 @@ export default function TourGuide() {
     <>
       {/* Tour popover box */}
       <div
-        className="driver-popover taiga-product-tour driver-popover-side-over driver-popover-align-start"
+        className="driver-popover alder-product-tour driver-popover-side-over driver-popover-align-start"
         id="driver-popover-content"
         role="dialog"
         aria-labelledby="driver-popover-title"

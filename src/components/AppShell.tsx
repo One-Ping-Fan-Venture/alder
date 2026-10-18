@@ -4,6 +4,7 @@ import React, { Suspense, useLayoutEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import { readSession } from '@/lib/auth';
+import { appPath } from '@/lib/path';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
@@ -11,7 +12,7 @@ import CommandPalette from '@/components/CommandPalette';
 import TourGuide from '@/components/TourGuide';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const pathname = appPath(usePathname());
   const router = useRouter();
   const { signedIn } = useApp();
   const onLogin = pathname === '/login';

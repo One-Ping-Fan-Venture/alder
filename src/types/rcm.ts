@@ -30,7 +30,7 @@ export interface ClaimTask {
   id: string;
   title: string;
   type: string;
-  owner: 'Clinic' | 'Taiga';
+  owner: 'Clinic' | 'Alder';
   description: string;
   carc?: string;
   payerClaimId?: string;
@@ -125,7 +125,7 @@ export interface WorkQueue {
   description: string;
   totalClaims: number;
   totalBalance: number;
-  taigaReview: number;
+  alderReview: number;
   clinicAction: number;
   snoozedClaims: number;
   snoozedBalance: number;
@@ -156,7 +156,7 @@ export interface Remit {
   payeeNpi: string;
   claimsCount: number;
   reconciliation: 'Reconciled' | 'Unreconciled';
-  postingStatus: 'Posted' | 'Pending';
+  postingStatus: 'Posted' | 'Pending' | 'Snoozed';
   receivedDate: string;
   postedDate: string;
 }

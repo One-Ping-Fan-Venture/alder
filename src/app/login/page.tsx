@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
-import { DEMO_PASSWORD, DEMO_USERNAME } from '@/lib/auth';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -76,12 +75,6 @@ export default function LoginPage() {
         >
           Sign in
         </button>
-
-        <div className="rounded-lg border border-border/70 bg-muted/40 px-3 py-2 text-xs text-muted-foreground space-y-1">
-          <p className="font-medium text-foreground">Demo account</p>
-          <p>Username {DEMO_USERNAME}</p>
-          <p className="break-all">Password {DEMO_PASSWORD}</p>
-        </div>
       </form>
     </div>
   );

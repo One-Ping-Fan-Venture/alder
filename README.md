@@ -1,6 +1,6 @@
-# Healthcare Revenue Cycle Management (RCM) — Taiga Billing Clone
+# Alder
 
-A high-fidelity, interactive healthcare Revenue Cycle Management (RCM) platform cloned from [Taiga Billing](https://demo.taigabilling.com/).
+A healthcare revenue cycle demo. Northstar Family Health is the clinic inside the product. Screen flows follow the [Taiga Billing](https://demo.taigabilling.com/) demo.
 
 Built as a **zero-backend demo application** using **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS v4**, featuring an embedded dataset of **1,546 synthetic medical claims** and **268 patients**.
 
@@ -62,8 +62,8 @@ Built as a **zero-backend demo application** using **Next.js 16 (App Router)**, 
 
 ```bash
 # Clone the repository
-git clone https://github.com/One-Ping-Fan-Venture/health-care-RCM.git
-cd health-care-RCM
+git clone https://github.com/One-Ping-Fan-Venture/alder.git
+cd alder
 
 # Install dependencies
 npm install
@@ -76,14 +76,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. Unsigned vi
 
 ### Demo account
 
-Sign-in is a local check against one account. The same username and password are printed on the form.
+The public site asks the browser for this account before any page loads. The in-app form uses the same account. The password is not printed on the form.
 
 | Field | Value |
 | --- | --- |
 | Username | `demo` |
 | Password | `N0rthstar#Billing2026!` |
 
-A successful sign-in stores a session in `localStorage` under `taiga_session`, so a refresh stays signed in. **Sign out** in the sidebar footer clears that session and returns to `/login`.
+A successful sign-in stores a session in `localStorage` under `alder_session`, so a refresh stays signed in. **Sign out** in the sidebar footer clears that session and returns to `/login`.
 
 ### Production Build
 
@@ -92,12 +92,18 @@ npm run build
 npm start
 ```
 
+### Branches
+
+`develop` is the default branch. New clones and new pull requests start there. Day-to-day work branches from `develop` and opens pull requests back into `develop`.
+
+`main` is the production branch. The host builds production from `main`. Release by opening a pull request from `develop` into `main` and merging it. That push is what deploys.
+
 ---
 
 ## 📁 Repository Structure
 
 ```
-health-care-RCM/
+alder/
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx            # Global layout with AppProvider, PersonaBanner, Shell

@@ -87,7 +87,7 @@ export default function RemitsPage() {
             </h1>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Electronic remittances from payers. Taiga reconciles these against your claims automatically. Filter to investigate a specific check or posting status.
+            Electronic remittances from payers. Alder reconciles these against your claims automatically. Filter to investigate a specific check or posting status.
           </p>
         </div>
 

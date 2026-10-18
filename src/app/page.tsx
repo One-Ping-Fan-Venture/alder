@@ -19,7 +19,7 @@ import {
 export default function OverviewPage() {
   const { remits } = useApp();
 
-  // Metrics matching live Taiga Billing demo
+  // Metrics matching live Alder Billing demo
   const kpis = [
     {
       id: 'paid',

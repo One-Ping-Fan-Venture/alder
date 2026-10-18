@@ -77,7 +77,7 @@ export default function QueuesPage() {
             </h1>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Every work queue your claims move through — what Taiga is working, what needs your team, and what&apos;s snoozed.
+            Every work queue your claims move through — what Alder is working, what needs your team, and what&apos;s snoozed.
           </p>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function QueuesPage() {
                 <th className="py-2.5 px-3 font-semibold">Queue</th>
                 <th className="py-2.5 px-3 text-right font-semibold">Total claims</th>
                 <th className="py-2.5 px-3 text-right font-semibold">Total balance</th>
-                <th className="py-2.5 px-3 text-center font-semibold">Taiga review</th>
+                <th className="py-2.5 px-3 text-center font-semibold">Alder review</th>
                 <th className="py-2.5 px-3 text-center font-semibold">Clinic action</th>
                 <th className="py-2.5 px-3 text-right font-semibold">Snoozed claims</th>
                 <th className="py-2.5 px-3 text-right font-semibold">Snoozed balance</th>
@@ -189,7 +189,7 @@ export default function QueuesPage() {
                     </td>
                     <td className="py-3 px-3 text-center">
                       <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30">
-                        {q.taigaReview}
+                        {q.alderReview}
                       </span>
                     </td>
                     <td className="py-3 px-3 text-center">

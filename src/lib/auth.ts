@@ -1,4 +1,4 @@
-export const SESSION_KEY = 'taiga_session';
+export const SESSION_KEY = 'alder_session';
 export const DEMO_USERNAME = 'demo';
 export const DEMO_PASSWORD = 'N0rthstar#Billing2026!';
 

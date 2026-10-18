@@ -11,7 +11,10 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'Overview',
+  title: {
+    default: 'Alder',
+    template: '%s · Alder',
+  },
   description: 'Healthcare billing transparency, automated claims lifecycle, and revenue cycle management dashboard.',
 };
 

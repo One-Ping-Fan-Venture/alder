@@ -49,7 +49,7 @@ export default function PriorAuthPage() {
             </h1>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Authorization requests Taiga is tracking with the payer, from intake through a decision.
+            Authorization requests Alder is tracking with the payer, from intake through a decision.
           </p>
         </div>
       </div>

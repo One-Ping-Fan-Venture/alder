@@ -43,7 +43,7 @@ export default function DevelopersPage() {
       const zip = new JSZip();
 
       // 1. README
-      zip.file('README.txt', 'Synthetic Taiga demo data. Not real patient or billing records.\nGenerated from Taiga Healthcare RCM Platform.');
+      zip.file('README.txt', 'Synthetic Alder demo data. Not real patient or billing records.\nGenerated from Alder Healthcare RCM Platform.');
 
       // 2. Claims CSV
       const claimHeader = 'Claim ID,Patient ID,Payer,Status,Charged cents\n';
@@ -63,7 +63,7 @@ export default function DevelopersPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'taiga_synthetic_demo_export.zip';
+      a.download = 'alder_synthetic_demo_export.zip';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -86,7 +86,7 @@ export default function DevelopersPage() {
           </h1>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          API keys, documentation, and the OpenAPI specification for the Taiga API.
+          API keys, documentation, and the OpenAPI specification for the Alder API.
         </p>
       </div>
 
@@ -100,7 +100,7 @@ export default function DevelopersPage() {
                   API Keys
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Create organization-scoped keys for the Taiga partner API. These are demo-only keys and reset when the app refreshes.
+                  Create organization-scoped keys for the Alder partner API. These are demo-only keys and reset when the app refreshes.
                 </p>
               </div>
               <button
@@ -207,7 +207,7 @@ export default function DevelopersPage() {
         {/* Right Info Card: API Documentation */}
         <div className="bg-card p-5 rounded-xl border border-border/80 shadow-xs space-y-4">
           <h2 className="text-sm font-bold text-foreground">
-            Taiga Partner API
+            Alder Partner API
           </h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Guides, endpoint reference, and the machine-readable spec.
@@ -215,9 +215,7 @@ export default function DevelopersPage() {
 
           <div className="space-y-2 text-xs">
             <a
-              href="https://docs.taigabilling.com"
-              target="_blank"
-              rel="noreferrer"
+              href="#docs"
               className="p-3 rounded-lg border border-border/80 bg-secondary/30 hover:border-primary/50 flex items-center justify-between text-foreground transition-colors group"
             >
               <div>
@@ -230,7 +228,7 @@ export default function DevelopersPage() {
             <div className="p-3 rounded-lg border border-border/80 bg-secondary/30 text-foreground">
               <span className="font-semibold">OpenAPI Specification</span>
               <p className="text-[10px] text-muted-foreground font-mono mt-0.5 truncate">
-                https://api.taigabilling.com/openapi.json
+                https://api.alderbilling.com/openapi.json
               </p>
             </div>
           </div>
