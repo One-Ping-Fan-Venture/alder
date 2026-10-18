@@ -87,4 +87,10 @@
   .lg\:grid-cols-12 {
     grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
   }
+  .lg\:grid-cols-\[minmax\(0\,2fr\)_minmax\(280px\,1fr\)\] {
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  }
+  .lg\:grid-cols-\[minmax\(0\,2fr\)_minmax\(340px\,1fr\)\] {
+    grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr);
+  }
 }
