@@ -109,8 +109,8 @@ export default function TourGuide() {
       left: '280px'
     },
     {
-      title: 'Role-Based Personas',
-      description: 'Use the floating persona dock at the bottom right to switch views between Front Desk, Biller, and Admin.',
+      title: 'Practice sidebar',
+      description: 'Use the sidebar to move between practice, billing, tickets, and settings. The theme control sits next to Demo visitor.',
       page: '/',
       top: '500px',
       left: '370px'

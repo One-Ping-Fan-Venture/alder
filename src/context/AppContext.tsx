@@ -85,6 +85,8 @@ interface AppContextType {
   setPersonaRole: (role: PersonaRole) => void;
   theme: 'light' | 'dark';
   toggleTheme: () => void;
+  sidebarCollapsed: boolean;
+  toggleSidebar: () => void;
   tourOpen: boolean;
   setTourOpen: (open: boolean) => void;
   commandPaletteOpen: boolean;
@@ -101,14 +103,15 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [personaRole, setPersonaRoleState] = useState<PersonaRole>('supervisor');
   const [tourOpen, setTourOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
   const [claims, setClaims] = useState<Claim[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('taiga_rcm_claims');
+      const saved = localStorage.getItem('taiga_rcm_claims_v2');
       if (saved) {
         try { return JSON.parse(saved); } catch (e) { /* ignore */ }
       }
@@ -118,7 +121,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('taiga_rcm_appointments');
+      const saved = localStorage.getItem('taiga_rcm_appointments_v2');
       if (saved) {
         try { return JSON.parse(saved); } catch (e) { /* ignore */ }
       }
@@ -150,7 +153,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Theme synchronization
   useEffect(() => {
     const saved = localStorage.getItem('taiga_theme');
-    const isDark = saved ? saved === 'dark' : true;
+    const isDark = saved === 'dark';
     if (isDark) {
       setTheme('dark');
       document.documentElement.classList.add('dark');
@@ -205,7 +208,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return c;
       });
       if (typeof window !== 'undefined') {
-        localStorage.setItem('taiga_rcm_claims', JSON.stringify(updated));
+        localStorage.setItem('taiga_rcm_claims_v2', JSON.stringify(updated));
       }
       return updated;
     });
@@ -225,7 +228,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return a;
       });
       if (typeof window !== 'undefined') {
-        localStorage.setItem('taiga_rcm_appointments', JSON.stringify(updated));
+        localStorage.setItem('taiga_rcm_appointments_v2', JSON.stringify(updated));
       }
       return updated;
     });
@@ -239,7 +242,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setAppointments(prev => {
       const updated = [newA, ...prev];
       if (typeof window !== 'undefined') {
-        localStorage.setItem('taiga_rcm_appointments', JSON.stringify(updated));
+        localStorage.setItem('taiga_rcm_appointments_v2', JSON.stringify(updated));
       }
       return updated;
     });
@@ -279,8 +282,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const resetDemoData = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('taiga_rcm_claims');
-      localStorage.removeItem('taiga_rcm_appointments');
+      localStorage.removeItem('taiga_rcm_claims_v2');
+      localStorage.removeItem('taiga_rcm_appointments_v2');
     }
     setClaims(initialClaims as unknown as Claim[]);
     setAppointments(initialAppointments as unknown as Appointment[]);
@@ -302,6 +305,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setPersonaRole,
         theme,
         toggleTheme,
+        sidebarCollapsed,
+        toggleSidebar: () => setSidebarCollapsed((open) => !open),
         tourOpen,
         setTourOpen,
         commandPaletteOpen,

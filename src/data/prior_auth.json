@@ -42,16 +42,16 @@
     "notes": "Authorized 12 visits under auth #UHC-8819204."
   },
   {
-    "id": "pa-1015",
-    "authNumber": "PA-1015",
+    "id": "pa-1018",
+    "authNumber": "PA-1018",
     "patientName": "David Kim",
     "patientId": "pat-david-kim",
-    "serviceCode": "99215",
-    "serviceName": "Complex Specialty Consultation",
-    "payer": "Aetna",
-    "plan": "Choice POS II",
-    "status": "Approved",
-    "submittedDate": "Aug 15, 2026",
+    "serviceCode": "95810",
+    "serviceName": "95810",
+    "payer": "Cigna",
+    "plan": "Open Access Plus",
+    "status": "Denied",
+    "submittedDate": "Aug 19, 2026",
     "expirationDate": "Nov 15, 2026",
     "notes": "Authorized under referral #AET-771920."
   }

@@ -14,13 +14,13 @@
   {
     "id": "q-coding-validation",
     "name": "Coding Validation Errors",
-    "description": "Claims that do not pass NCCI edits or LCD/NCD coding validations.",
-    "totalClaims": 18,
-    "totalBalance": 14200.0,
-    "taigaReview": 12,
-    "clinicAction": 6,
-    "snoozedClaims": 2,
-    "snoozedBalance": 1800.0,
+    "description": "Claims that do not pass coding validations.",
+    "totalClaims": 0,
+    "totalBalance": 0,
+    "taigaReview": 0,
+    "clinicAction": 0,
+    "snoozedClaims": 0,
+    "snoozedBalance": 0,
     "sampleClaimId": "clm-1002"
   },
   {

@@ -11,29 +11,38 @@
   "providers": [
     {
       "id": "prv-1",
-      "name": "Priya Nair, MD",
+      "name": "Priya Nair",
       "npi": "1740250123",
       "type": "Individual",
       "specialty": "Family Medicine",
-      "taxId": "93-4819201",
+      "taxId": "N/A",
       "status": "Active"
     },
     {
       "id": "prv-2",
-      "name": "Samuel Ortiz, DO",
+      "name": "Samuel Ortiz",
       "npi": "1659380777",
       "type": "Individual",
       "specialty": "Internal Medicine",
-      "taxId": "93-4819201",
+      "taxId": "N/A",
       "status": "Active"
     },
     {
       "id": "prv-3",
-      "name": "Hannah Cole, MD",
+      "name": "Hannah Cole",
       "npi": "1295771044",
       "type": "Individual",
       "specialty": "Pediatrics",
-      "taxId": "93-4819201",
+      "taxId": "N/A",
+      "status": "Active"
+    },
+    {
+      "id": "prv-org",
+      "name": "Northstar Family Health",
+      "npi": "1982744321",
+      "type": "Organization",
+      "specialty": "",
+      "taxId": "••• 0094",
       "status": "Active"
     }
   ],

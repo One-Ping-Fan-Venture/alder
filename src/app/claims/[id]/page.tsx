@@ -102,7 +102,7 @@ function ClaimDetailContent({ params }: { params: Promise<{ id: string }> }) {
                 {claim.patientName}
               </h1>
               <StatusBadge status={claim.status} size="md" />
-              {claim.status === 'denied' && (
+              {claim.status.toLowerCase() === 'denied' && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-medium bg-rose-500/15 text-rose-400 border border-rose-500/30">
                   <AlertTriangle className="size-3 shrink-0" />
                   Owner: Needs your attention

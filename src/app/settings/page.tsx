@@ -11,9 +11,6 @@ import {
   TableProperties,
   Landmark,
   Receipt,
-  Plus,
-  Eye,
-  EyeOff,
   CheckCircle2
 } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
@@ -54,7 +51,7 @@ export default function SettingsPage() {
           </h1>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          Manage clinic providers, service facilities, payer credentialing, fee schedules, and banking
+          Your practice’s billing setup, in one place. Need a change? Contact support.
         </p>
       </div>
 
@@ -80,20 +77,11 @@ export default function SettingsPage() {
         <div className="bg-card rounded-xl border border-border/80 p-5 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border/60">
             <div>
-              <h2 className="text-sm font-bold text-foreground">
-                Rendering & Billing Providers
-              </h2>
+              <h2 className="text-sm font-bold text-foreground">Providers</h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Active clinical providers registered under Northstar Family Health NPI #1982744321
+                The clinicians your practice bills under.
               </p>
             </div>
-            <button
-              onClick={() => alert('Add provider modal.')}
-              className="px-3 py-1.5 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-lg flex items-center gap-1 shadow-xs transition-colors self-start sm:self-auto"
-            >
-              <Plus className="size-3.5" />
-              <span>Add Provider</span>
-            </button>
           </div>
 
           <div className="overflow-x-auto">
@@ -101,11 +89,9 @@ export default function SettingsPage() {
               <thead className="bg-secondary/40 border-b border-border text-muted-foreground font-medium">
                 <tr>
                   <th className="py-2.5 px-3 font-semibold">Provider</th>
-                  <th className="py-2.5 px-3 font-semibold font-mono">Individual NPI</th>
+                  <th className="py-2.5 px-3 font-semibold font-mono">NPI</th>
                   <th className="py-2.5 px-3 font-semibold">Type</th>
-                  <th className="py-2.5 px-3 font-semibold">Specialty</th>
                   <th className="py-2.5 px-3 font-semibold">Tax ID</th>
-                  <th className="py-2.5 px-3 font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
@@ -120,26 +106,8 @@ export default function SettingsPage() {
                         {p.npi}
                       </td>
                       <td className="py-3 px-3 text-muted-foreground">{p.type}</td>
-                      <td className="py-3 px-3 font-medium text-foreground">
-                        {p.specialty}
-                      </td>
                       <td className="py-3 px-3 font-mono text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <span>{isRevealed ? p.taxId : '••• 0094'}</span>
-                          <button
-                            type="button"
-                            onClick={() => toggleTaxId(p.id)}
-                            className="p-1 hover:text-foreground text-muted-foreground transition-colors"
-                            title={isRevealed ? 'Mask Tax ID' : 'Reveal Tax ID'}
-                          >
-                            {isRevealed ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-                          </button>
-                        </div>
-                      </td>
-                      <td className="py-3 px-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                          {p.status}
-                        </span>
+                        {p.taxId === 'N/A' ? 'N/A' : (isRevealed ? p.taxId : '••• 0094')}
                       </td>
                     </tr>
                   );

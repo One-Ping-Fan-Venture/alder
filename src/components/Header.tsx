@@ -1,12 +1,31 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight, PanelLeft } from 'lucide-react';
+import { useApp } from '@/context/AppContext';
+
+const TITLES: Record<string, string> = {
+  '': 'Overview',
+  appointments: 'Front Desk',
+  rounds: 'Rounds',
+  eligibility: 'Eligibility',
+  reports: 'Reports',
+  claims: 'Claims',
+  queues: 'Queues',
+  'prior-auth': 'Prior Auth',
+  remits: 'Remits',
+  collections: 'Patient balances',
+  developers: 'Developers',
+  help: 'Help center',
+  tickets: 'Tickets',
+  settings: 'Settings & configuration',
+};
 
 export default function Header() {
   const pathname = usePathname();
+  const { toggleSidebar } = useApp();
 
   // Compute breadcrumbs
   const segments = pathname.split('/').filter(Boolean);
@@ -18,25 +37,22 @@ export default function Header() {
     section = 'Practice';
   }
 
-  const pageTitle = segments.length === 0
-    ? 'Overview'
-    : segments[0] === 'appointments'
-      ? 'Front Desk'
-      : segments[0] === 'collections'
-        ? 'Patient Balances'
-        : segments[0] === 'prior-auth'
-          ? 'Prior Auth'
-          : segments[0] === 'settings'
-            ? 'Settings & configuration'
-            : segments[0].charAt(0).toUpperCase() + segments[0].slice(1).replace('-', ' ');
+  const pageTitle = TITLES[segments[0] || ''] || 'Overview';
+
+  useEffect(() => {
+    document.title = segments.length > 1 && segments[0] === 'claims' ? 'Claim' : pageTitle;
+  }, [pageTitle, segments]);
 
   return (
     <header className="flex min-h-14 sm:min-h-16 shrink-0 flex-wrap items-center justify-between gap-y-2 px-4 md:px-6 py-2 md:py-0 border-b border-border/70 bg-background/50 backdrop-blur-xs select-none">
       {/* Left: Sidebar Toggle + Breadcrumb */}
       <div className="flex items-center gap-2 text-sm">
         <button
+          type="button"
+          onClick={toggleSidebar}
           className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           title="Toggle sidebar"
+          aria-label="Toggle sidebar"
         >
           <PanelLeft className="size-4" />
         </button>

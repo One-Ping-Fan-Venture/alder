@@ -34,9 +34,9 @@ export default function ClaimsPage() {
   const [taskCategory, setTaskCategory] = useState('all');
   const [taskType, setTaskType] = useState('all');
   const [page, setPage] = useState(1);
-  const pageSize = 25;
+  const pageSize = 65;
 
-  const [sortField, setSortField] = useState<'serviceDate' | 'billed' | 'claimBalance'>('serviceDate');
+  const [sortField, setSortField] = useState<'none' | 'serviceDate' | 'billed' | 'claimBalance'>('none');
   const [sortAsc, setSortAsc] = useState(false);
 
   // Column visibility state
@@ -73,15 +73,7 @@ export default function ClaimsPage() {
     }
 
     if (statusFilter !== 'all') {
-      if (statusFilter === 'paid') {
-        result = result.filter((c) => c.status === 'paid' || c.status === 'finalized_paid');
-      } else if (statusFilter === 'denied') {
-        result = result.filter((c) => c.status === 'denied' || c.status === 'finalized_denied');
-      } else if (statusFilter === 'awaiting_info') {
-        result = result.filter((c) => ['missing_information', 'waiting_for_provider'].includes(c.status));
-      } else {
-        result = result.filter((c) => c.status === statusFilter);
-      }
+      result = result.filter((c) => c.status.toLowerCase() === statusFilter.toLowerCase());
     }
 
     if (ownerFilter !== 'all') {
@@ -92,14 +84,15 @@ export default function ClaimsPage() {
       result = result.filter((c) => c.payer === payerFilter);
     }
 
-    // Sort
-    result = [...result].sort((a, b) => {
-      let cmp = 0;
-      if (sortField === 'billed') cmp = a.billed - b.billed;
-      else if (sortField === 'claimBalance') cmp = a.claimBalance - b.claimBalance;
-      else cmp = a.id.localeCompare(b.id);
-      return sortAsc ? cmp : -cmp;
-    });
+    if (sortField !== 'none') {
+      result = [...result].sort((a, b) => {
+        let cmp = 0;
+        if (sortField === 'billed') cmp = a.billed - b.billed;
+        else if (sortField === 'claimBalance') cmp = a.claimBalance - b.claimBalance;
+        else cmp = a.serviceDate.localeCompare(b.serviceDate);
+        return sortAsc ? cmp : -cmp;
+      });
+    }
 
     return result;
   }, [claims, search, statusFilter, ownerFilter, payerFilter, sortField, sortAsc]);
@@ -131,7 +124,7 @@ export default function ClaimsPage() {
             </h1>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Read-only view of claims managed by the operations team
+            Every claim Taiga has touched, with current status and money flowing through. This view is read-only; our ops team works the queue on your behalf.
           </p>
         </div>
 
@@ -149,7 +142,7 @@ export default function ClaimsPage() {
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-xs transition-colors"
           >
             <Plus className="size-3.5" />
-            <span>+ New claim</span>
+            <span>New claim</span>
           </button>
         </div>
       </div>
@@ -188,6 +181,7 @@ export default function ClaimsPage() {
             <option value="Cigna">Cigna</option>
             <option value="UnitedHealthcare">UnitedHealthcare</option>
             <option value="Oregon Health Plan">Oregon Health Plan</option>
+            <option value="Self-pay">Self-pay</option>
           </select>
 
           {/* 2. All Statuses */}
@@ -200,13 +194,19 @@ export default function ClaimsPage() {
             className="px-2.5 py-1.5 bg-background border border-border/80 rounded-lg text-xs font-medium text-foreground cursor-pointer focus:outline-none"
           >
             <option value="all">All statuses</option>
-            <option value="paid">Paid</option>
-            <option value="denied">Denied</option>
-            <option value="submitted_to_payer">Submitted</option>
-            <option value="awaiting_info">Awaiting info</option>
-            <option value="era_received">ERA received</option>
-            <option value="coded">Coded</option>
-            <option value="rejected">Rejected</option>
+            <option value="Paid">Paid</option>
+            <option value="Denied">Denied</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Awaiting info">Awaiting info</option>
+            <option value="ERA received">ERA received</option>
+            <option value="Coded">Coded</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Waiting on provider">Waiting on provider</option>
+            <option value="In intake">In intake</option>
+            <option value="Paid (incorrect)">Paid (incorrect)</option>
+            <option value="On hold">On hold</option>
+            <option value="ERA review">ERA review</option>
+            <option value="Not billable">Not billable</option>
           </select>
 
           {/* 3. Tags */}
@@ -432,7 +432,6 @@ export default function ClaimsPage() {
                     {/* Patient Name */}
                     <td className="py-2.5 px-3 font-medium text-foreground whitespace-nowrap">
                       <div>{claim.patientName}</div>
-                      <div className="text-[10px] text-muted-foreground font-mono">{claim.id}</div>
                     </td>
 
                     {visibleCols.serviceDate && (

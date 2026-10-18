@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { easternISODate } from '@/lib/eastern';
 import {
   ShieldCheck,
   Calendar,
@@ -30,14 +31,14 @@ interface EligibilityResult {
 }
 
 export default function EligibilityPage() {
-  const [insurerQuery, setInsurerQuery] = useState('Aetna');
-  const [selectedPayerId, setSelectedPayerId] = useState('60054');
+  const [insurerQuery, setInsurerQuery] = useState('');
+  const [selectedPayerId, setSelectedPayerId] = useState('');
   const [service, setService] = useState('General plan coverage');
-  const [dateOfService, setDateOfService] = useState('2026-10-17');
-  const [firstName, setFirstName] = useState('Amelia');
-  const [lastName, setLastName] = useState('Ross');
-  const [memberId, setMemberId] = useState('MEM-ROSS-01');
-  const [dob, setDob] = useState('1988-04-12');
+  const [dateOfService, setDateOfService] = useState(easternISODate);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [memberId, setMemberId] = useState('');
+  const [dob, setDob] = useState('');
   const [isDependent, setIsDependent] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);

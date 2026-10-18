@@ -33,11 +33,11 @@ export default function RemitsPage() {
   const [snoozed, setSnoozed] = useState('all');
 
   const [page, setPage] = useState(1);
-  const pageSize = 15;
+  const pageSize = 50;
 
   const filtered = remits.filter((r) => {
     if (tab === 'posted' && r.postingStatus !== 'Posted') return false;
-    if (tab === 'snoozed' && r.reconciliation !== 'Unreconciled') return false;
+    if (tab === 'snoozed' && r.postingStatus !== 'Snoozed') return false;
 
     if (checkNum.trim() && !r.checkNumber.toLowerCase().includes(checkNum.toLowerCase())) return false;
     if (checkDate.trim() && !r.checkDate.includes(checkDate)) return false;
@@ -87,7 +87,7 @@ export default function RemitsPage() {
             </h1>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Electronic remittance advice (835 ERA), checks, and payments
+            Electronic remittances from payers. Taiga reconciles these against your claims automatically. Filter to investigate a specific check or posting status.
           </p>
         </div>
 
@@ -121,7 +121,7 @@ export default function RemitsPage() {
         {[
           { key: 'all', label: 'All', count: remits.length },
           { key: 'posted', label: 'Posted', count: remits.filter((r) => r.postingStatus === 'Posted').length },
-          { key: 'snoozed', label: 'Snoozed', count: remits.filter((r) => r.reconciliation === 'Unreconciled').length }
+          { key: 'snoozed', label: 'Snoozed', count: remits.filter((r) => r.postingStatus === 'Snoozed').length }
         ].map((t) => (
           <button
             key={t.key}

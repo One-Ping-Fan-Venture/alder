@@ -29,17 +29,18 @@ import {
   Filter
 } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
+import { easternClockLabel, easternTodayLabel } from '@/lib/eastern';
 
 export default function AppointmentsPage() {
   const { appointments, collectCopay, addAppointment } = useApp();
   const [mainTab, setMainTab] = useState<'appointments' | 'patients'>('appointments');
   const [filterTab, setFilterTab] = useState<'all' | 'to_collect' | 'collected'>('all');
-  const [selectedAppt, setSelectedAppt] = useState<Appointment>(appointments[0] || null);
+  const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isCollectModalOpen, setIsCollectModalOpen] = useState(false);
   const [copayAmount, setCopayAmount] = useState(25);
   const [selectedDate, setSelectedDate] = useState('Today');
-  const [selectedOffice, setSelectedOffice] = useState('All locations');
+  const [selectedOffice, setSelectedOffice] = useState('All offices');
   const [patientSearch, setPatientSearch] = useState('');
 
   // New appointment form state
@@ -50,12 +51,12 @@ export default function AppointmentsPage() {
   const [newCopay, setNewCopay] = useState(25);
 
   const filteredAppts = appointments.filter((a) => {
-    if (filterTab === 'to_collect') return a.copayStatus === 'To collect';
+    if (filterTab === 'to_collect') return a.copayStatus !== 'Collected';
     if (filterTab === 'collected') return a.copayStatus === 'Collected';
     return true;
   });
 
-  const toCollectCount = appointments.filter((a) => a.copayStatus === 'To collect').length;
+  const toCollectCount = appointments.filter((a) => a.copayStatus !== 'Collected').length;
   const collectedCount = appointments.filter((a) => a.copayStatus === 'Collected').length;
 
   const handleCollectSubmit = () => {
@@ -116,7 +117,10 @@ export default function AppointmentsPage() {
             </span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Today’s visits, copay collections, and check-in status
+            Today&apos;s visits with copays and check-in, and every patient on file with their insurance.
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Demo data only. Eligibility and collections are simulated; no insurer is contacted and no payment is charged.
           </p>
         </div>
 
@@ -133,7 +137,7 @@ export default function AppointmentsPage() {
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-xs transition-colors"
           >
             <UserPlus className="size-3.5" />
-            <span>+ New patient</span>
+            <span>New patient</span>
           </button>
         </div>
       </div>
@@ -178,6 +182,7 @@ export default function AppointmentsPage() {
                 <div className="flex items-center gap-1.5 px-2 font-medium text-foreground">
                   <Calendar className="size-3 text-primary" />
                   <span>{selectedDate}</span>
+                  <span className="text-muted-foreground">{easternTodayLabel()}</span>
                 </div>
                 <button
                   onClick={() => setSelectedDate(selectedDate === 'Today' ? 'Tomorrow' : 'Today')}
@@ -195,9 +200,9 @@ export default function AppointmentsPage() {
                   onChange={(e) => setSelectedOffice(e.target.value)}
                   className="bg-transparent border-none text-xs focus:outline-none cursor-pointer text-foreground"
                 >
-                  <option value="All locations" className="bg-card text-foreground">All locations</option>
-                  <option value="Main Clinic" className="bg-card text-foreground">Main Clinic (Portland)</option>
-                  <option value="Telehealth" className="bg-card text-foreground">Telehealth</option>
+                  <option value="All offices" className="bg-card text-foreground">All offices</option>
+                  <option value="Main" className="bg-card text-foreground">Main</option>
+                  <option value="West" className="bg-card text-foreground">West</option>
                 </select>
               </div>
 
@@ -241,62 +246,60 @@ export default function AppointmentsPage() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/80 bg-secondary/60 hover:bg-secondary text-xs font-medium text-foreground transition-colors self-start md:self-auto shadow-xs"
             >
               <Plus className="size-3.5 text-primary" />
-              <span>+ Add appointment</span>
+              <span>Add appointment</span>
             </button>
           </div>
 
           {/* Split Schedule View: Left Schedule Table, Right Detail Pane */}
+          <p className="text-[11px] text-muted-foreground">All times Eastern</p>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-            {/* Left Schedule Pane (~360px / 4 columns) */}
-            <div className="lg:col-span-4 bg-card rounded-xl border border-border/80 overflow-hidden shadow-xs">
+            <div className="lg:col-span-8 bg-card rounded-xl border border-border/80 overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-secondary/40 border-b border-border text-muted-foreground font-medium">
                     <tr>
                       <th className="py-2.5 px-3 font-semibold">Start time</th>
+                      <th className="py-2.5 px-3 font-semibold">Active coverage</th>
                       <th className="py-2.5 px-3 font-semibold">First name</th>
                       <th className="py-2.5 px-3 font-semibold">Last name</th>
+                      <th className="py-2.5 px-3 font-semibold">Primary payer</th>
+                      <th className="py-2.5 px-3 font-semibold">Status</th>
+                      <th className="py-2.5 px-3 font-semibold">Copay</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
-                    {filteredAppts.map((appt, idx) => {
+                    {filteredAppts.map((appt) => {
                       const isSelected = selectedAppt?.id === appt.id;
-                      const showTimeLine = idx === 3; // Render red current-time indicator line
-
                       return (
-                        <React.Fragment key={appt.id}>
-                          {showTimeLine && (
-                            <tr className="bg-transparent pointer-events-none">
-                              <td colSpan={3} className="p-0">
-                                <div className="flex items-center py-1">
-                                  <span className="size-2 rounded-full bg-rose-500 shrink-0 -ml-1" />
-                                  <div className="h-[2px] bg-rose-500 w-full" />
-                                  <span className="text-[10px] text-rose-500 font-mono font-bold px-1 whitespace-nowrap">
-                                    12:45 PM
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                          <tr
-                            onClick={() => setSelectedAppt(appt)}
-                            className={`cursor-pointer transition-colors ${
-                              isSelected
-                                ? 'bg-secondary text-foreground font-semibold border-l-2 border-primary'
-                                : 'hover:bg-secondary/30 text-muted-foreground hover:text-foreground'
-                            }`}
-                          >
-                            <td className="py-3 px-3 font-mono text-foreground whitespace-nowrap">
-                              {appt.time}
-                            </td>
-                            <td className="py-3 px-3 font-medium text-foreground">
-                              {appt.firstName}
-                            </td>
-                            <td className="py-3 px-3 font-medium text-foreground">
-                              {appt.lastName}
-                            </td>
-                          </tr>
-                        </React.Fragment>
+                        <tr
+                          key={appt.id}
+                          onClick={() => setSelectedAppt(appt)}
+                          className={`cursor-pointer transition-colors ${
+                            isSelected
+                              ? 'bg-secondary text-foreground font-semibold border-l-2 border-primary'
+                              : 'hover:bg-secondary/30 text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          <td className="py-3 px-3 font-mono text-foreground whitespace-nowrap">{appt.time}</td>
+                          <td className="py-3 px-3">{appt.coverageStatus}</td>
+                          <td className="py-3 px-3 font-medium text-foreground">{appt.firstName}</td>
+                          <td className="py-3 px-3 font-medium text-foreground">{appt.lastName}</td>
+                          <td className="py-3 px-3">{appt.payer}</td>
+                          <td className="py-3 px-3">{appt.status}</td>
+                          <td className="py-3 px-3">
+                            {appt.copayStatus === 'Copay not checked' ? (
+                              <div>
+                                <div>—</div>
+                                <div className="text-[11px] text-muted-foreground">Copay not checked</div>
+                              </div>
+                            ) : (
+                              <div>
+                                <div>${appt.estCopay.toFixed(2)}</div>
+                                <div className="text-[11px] text-muted-foreground">{appt.copayStatus}</div>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
                       );
                     })}
                   </tbody>
@@ -305,7 +308,7 @@ export default function AppointmentsPage() {
             </div>
 
             {/* Right Detail Pane (~8 columns) */}
-            <div className="lg:col-span-8 space-y-4">
+            <div className="lg:col-span-4 space-y-4">
               {selectedAppt ? (
                 <>
                   {/* Action Toolbar */}
@@ -468,8 +471,10 @@ export default function AppointmentsPage() {
                   </div>
                 </>
               ) : (
-                <div className="bg-card rounded-xl border border-border/80 p-8 text-center text-muted-foreground text-xs">
-                  Select an appointment on the left to view details.
+                <div className="bg-card rounded-xl border border-border/80 p-8 text-center text-muted-foreground text-xs space-y-2">
+                  <div className="text-[11px]">Now · {easternClockLabel()}</div>
+                  <h2 className="text-sm font-semibold text-foreground">Select a patient to see appointments</h2>
+                  <p>Pick a visit to review insurance, check the copay, check in, and collect payment.</p>
                 </div>
               )}
             </div>

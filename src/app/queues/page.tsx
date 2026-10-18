@@ -32,12 +32,23 @@ export default function QueuesPage() {
     { key: 'pre_submission', label: 'Pre-Submission', count: 102 },
     { key: 'rejections', label: 'Rejections', count: 40 },
     { key: 'denials', label: 'Denials', count: 3 },
-    { key: 'stale', label: 'Stale Claims', count: 18 },
-    { key: 'other', label: 'Other Post-Submission', count: 12 }
+    { key: 'stale', label: 'Stale Claims', count: null as number | null },
+    { key: 'other', label: 'Other Post-Submission', count: 42 }
   ];
 
   // Filter queues based on tab & search
+  const tabQueueIds: Record<string, string[]> = {
+    coding: ['q-provider-followup', 'q-coding-validation'],
+    pre_submission: [],
+    rejections: [],
+    denials: [],
+    stale: [],
+    other: [],
+  };
+
   const filteredQueues = queues.filter((q) => {
+    const ids = tabQueueIds[activeTab];
+    if (ids && !ids.includes(q.id)) return false;
     if (hideEmpty && q.totalClaims === 0) return false;
     if (searchQueue.trim() && !q.name.toLowerCase().includes(searchQueue.toLowerCase())) return false;
     return true;
@@ -66,7 +77,7 @@ export default function QueuesPage() {
             </h1>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Operational queues to triage and resolve claims
+            Every work queue your claims move through — what Taiga is working, what needs your team, and what&apos;s snoozed.
           </p>
         </div>
       </div>
@@ -75,7 +86,7 @@ export default function QueuesPage() {
       <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs text-amber-300 flex items-center gap-2.5 shadow-xs">
         <Info className="size-4 text-amber-400 shrink-0" />
         <span>
-          Queues may have delayed updates due to real-time clearinghouse sync (polling every 15 minutes).
+          This view may not reflect recent activity; the last refresh was more than 30 minutes ago.
         </span>
       </div>
 
@@ -92,7 +103,7 @@ export default function QueuesPage() {
             }`}
           >
             <span>{tab.label}</span>
-            <span className="text-[11px] opacity-75">({tab.count})</span>
+            {tab.count != null && <span className="text-[11px] opacity-75">({tab.count})</span>}
           </button>
         ))}
       </div>
@@ -174,7 +185,7 @@ export default function QueuesPage() {
                       {q.totalClaims}
                     </td>
                     <td className="py-3 px-3 text-right font-semibold text-foreground">
-                      ${q.totalBalance.toLocaleString()}
+                      ${q.totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                     <td className="py-3 px-3 text-center">
                       <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30">
@@ -190,7 +201,7 @@ export default function QueuesPage() {
                       {q.snoozedClaims}
                     </td>
                     <td className="py-3 px-3 text-right text-muted-foreground">
-                      ${q.snoozedBalance.toLocaleString()}
+                      ${q.snoozedBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                   </tr>
                 );
@@ -200,8 +211,9 @@ export default function QueuesPage() {
         </div>
       </div>
 
-      {/* Selected Queue Claims Drilldown */}
-      {selectedQueue && (
+      <p className="text-xs text-muted-foreground">Showing all {filteredQueues.length} queues.</p>
+
+      {false && selectedQueue && (
         <div className="bg-card rounded-xl border border-border/80 p-5 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-border/60">
             <div>

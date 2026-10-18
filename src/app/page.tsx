@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
+import { easternDateLabel } from '@/lib/eastern';
 import {
   Gauge,
   CreditCard,
@@ -70,36 +71,36 @@ export default function OverviewPage() {
     {
       id: 't-1',
       title: 'Working denial',
-      meta: 'Marcus Lee · UnitedHealthcare · Sep 26, 2026',
+      meta: `Marcus Lee · UnitedHealthcare · ${easternDateLabel(-20)}`,
       age: '20d ago',
       claimId: 'clm-1002'
     },
     {
       id: 't-2',
       title: 'Awaiting information from your clinic',
-      meta: 'David Kim · Aetna · Oct 5, 2026',
+      meta: `David Kim · Aetna · ${easternDateLabel(-11)}`,
       age: '11d ago',
       claimId: 'clm-1003'
     },
     {
       id: 't-3',
       title: 'Resolving rejection',
-      meta: 'James Wong · Blue Cross Blue Shield · Oct 13, 2026',
+      meta: `James Wong · Blue Cross Blue Shield · ${easternDateLabel(-3)}`,
       age: '3d ago',
       claimId: 'clm-1007'
     },
     {
       id: 't-4',
       title: 'Following up with payer',
-      meta: 'Grace Howard · Blue Cross Blue Shield · Oct 9, 2026',
+      meta: `Grace Howard · Blue Cross Blue Shield · ${easternDateLabel(-7)}`,
       age: '7d ago',
       claimId: 'clm-1011'
     },
     {
       id: 't-5',
       title: 'Resolving rejection',
-      meta: 'Layla Greer · Aetna · Jul 28, 2026',
-      age: 'Jul 29, 2026',
+      meta: 'Layla Greer · Aetna · Jul 29, 2026',
+      age: 'Jul 30, 2026',
       claimId: 'clm-1015'
     }
   ];

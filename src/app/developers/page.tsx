@@ -86,7 +86,7 @@ export default function DevelopersPage() {
           </h1>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          Partner API credentials, webhook integrations, and synthetic dataset export
+          API keys, documentation, and the OpenAPI specification for the Taiga API.
         </p>
       </div>
 
@@ -100,7 +100,7 @@ export default function DevelopersPage() {
                   API Keys
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Create organization-scoped keys for the Taiga partner API
+                  Create organization-scoped keys for the Taiga partner API. These are demo-only keys and reset when the app refreshes.
                 </p>
               </div>
               <button
@@ -174,10 +174,10 @@ export default function DevelopersPage() {
             <div className="flex items-center justify-between pb-3 border-b border-border/60">
               <div>
                 <h2 className="text-sm font-bold text-foreground">
-                  Your Data (Synthetic Export)
+                  Your data
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Download all 1,546 synthetic demo claims and 268 patient records as CSV files in one ZIP.
+                  Download the synthetic demo claims and patient directory as CSV files in one ZIP.
                 </p>
               </div>
             </div>
@@ -185,10 +185,10 @@ export default function DevelopersPage() {
             <div className="p-4 rounded-xl bg-secondary/30 border border-border/70 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-xs">
               <div className="space-y-1">
                 <span className="font-semibold text-foreground">
-                  Full Dataset Package (ZIP)
+                  Export all data
                 </span>
                 <p className="text-[11px] text-muted-foreground">
-                  Includes: claims.csv (81 KB), patients.csv (14 KB), README.txt
+                  Claims and patients as CSV, plus a short README.
                 </p>
               </div>
 
@@ -210,7 +210,7 @@ export default function DevelopersPage() {
             Taiga Partner API
           </h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Integrate your EHR or custom billing software directly with Taiga’s automated revenue cycle engine using REST webhooks and FHIR/EDI endpoints.
+            Guides, endpoint reference, and the machine-readable spec.
           </p>
 
           <div className="space-y-2 text-xs">

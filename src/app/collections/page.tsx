@@ -22,7 +22,7 @@ export default function CollectionsPage() {
       patient: 'Amelia Ross',
       patientId: 'pat-amelia-ross',
       owes: 42.5,
-      dos: 'Sep 29, 2026',
+      dos: 'Sep 30, 2026',
       payer: 'Aetna',
       contact: 'Email & SMS',
       lastContact: 'Never',
@@ -34,10 +34,10 @@ export default function CollectionsPage() {
       patient: 'Marcus Lee',
       patientId: 'pat-marcus-lee',
       owes: 128.0,
-      dos: 'Sep 23, 2026',
+      dos: 'Sep 24, 2026',
       payer: 'UnitedHealthcare',
-      contact: 'Email & SMS',
-      lastContact: 'Phone call 5d ago',
+      contact: 'Email & Phone',
+      lastContact: 'Phone call 4d ago',
       status: 'Ready to request',
       phone: '(503) 555-0455'
     },
@@ -46,10 +46,10 @@ export default function CollectionsPage() {
       patient: 'Sofia Mendez',
       patientId: 'pat-sofia-mendez',
       owes: 60.75,
-      dos: 'Sep 16, 2026',
+      dos: 'Sep 17, 2026',
       payer: 'Cigna',
-      contact: 'Email & SMS',
-      lastContact: 'SMS sent 4d ago',
+      contact: 'Email & Phone',
+      lastContact: 'Phone call 4d ago · 2 contacts',
       status: 'Requested',
       phone: '(503) 555-0211'
     },
@@ -57,25 +57,85 @@ export default function CollectionsPage() {
       id: 'bal-4',
       patient: 'David Kim',
       patientId: 'pat-david-kim',
-      owes: 85.0,
-      dos: 'Sep 10, 2026',
+      owes: 25.0,
+      dos: 'Sep 8, 2026',
       payer: 'Aetna',
-      contact: 'SMS only',
-      lastContact: 'Never',
-      status: 'Ready to request',
+      contact: 'Email & Phone',
+      lastContact: 'Email request 21d ago',
+      status: 'Paid',
       phone: '(503) 555-0589'
     },
     {
       id: 'bal-5',
       patient: 'Olivia Grant',
       patientId: 'pat-olivia-grant',
-      owes: 35.0,
-      dos: 'Aug 28, 2026',
+      owes: 89.4,
+      dos: 'Sep 21, 2026',
       payer: 'UnitedHealthcare',
-      contact: 'Email & SMS',
-      lastContact: 'Statement mailed 12d ago',
-      status: 'Payment plan',
+      contact: 'Email & Phone',
+      lastContact: 'Never',
+      status: 'No contact on file',
       phone: '(503) 555-0348'
+    },
+    {
+      id: 'bal-6',
+      patient: 'James Wong',
+      patientId: 'pat-james-wong',
+      owes: 153.2,
+      dos: 'Sep 13, 2026',
+      payer: 'Blue Cross Blue Shield',
+      contact: 'Email & Phone',
+      lastContact: 'Phone call 7d ago',
+      status: 'Send failed',
+      phone: '(503) 555-0177'
+    },
+    {
+      id: 'bal-7',
+      patient: 'Noah Bennett',
+      patientId: 'pat-noah-bennett',
+      owes: 36,
+      dos: 'Sep 3, 2026',
+      payer: 'UnitedHealthcare',
+      contact: 'Email & Phone',
+      lastContact: 'Phone call 26d ago',
+      status: 'Consent needed',
+      phone: '(503) 555-0402'
+    },
+    {
+      id: 'bal-8',
+      patient: 'Amelia Ross',
+      patientId: 'pat-amelia-ross',
+      owes: 19.75,
+      dos: 'Aug 27, 2026',
+      payer: 'Aetna',
+      contact: 'Email & Phone',
+      lastContact: 'Never',
+      status: 'Suppressed',
+      phone: '(503) 555-0194'
+    },
+    {
+      id: 'bal-9',
+      patient: 'Sofia Mendez',
+      patientId: 'pat-sofia-mendez',
+      owes: 54.1,
+      dos: 'Aug 19, 2026',
+      payer: 'Cigna',
+      contact: 'Email & Phone',
+      lastContact: 'Email request Sep 8, 2026',
+      status: 'Balance changed',
+      phone: '(503) 555-0211'
+    },
+    {
+      id: 'bal-10',
+      patient: 'Marcus Lee',
+      patientId: 'pat-marcus-lee',
+      owes: 221.5,
+      dos: 'Oct 4, 2026',
+      payer: 'UnitedHealthcare',
+      contact: 'Email & Phone',
+      lastContact: 'Never',
+      status: 'Ready to request',
+      phone: '(503) 555-0455'
     }
   ]);
 
@@ -111,11 +171,11 @@ export default function CollectionsPage() {
           <div className="flex items-center gap-2">
             <CircleDollarSign className="size-5 text-foreground" />
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Patient Balances
+              Patient balances
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Post-insurance patient liabilities, digital SMS text invoices, and automated statements.
+            Balances patients owe after insurance pays. Review each one, then send a secure payment request by email. Nothing is sent without your say-so.
           </p>
         </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
@@ -22,15 +22,12 @@ import {
   Settings2,
   Search,
   Sun,
-  Moon,
-  PanelLeftClose,
-  PanelLeft
+  Moon
 } from 'lucide-react';
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { theme, toggleTheme, setTourOpen, setCommandPaletteOpen, persona, tickets } = useApp();
-  const [collapsed, setCollapsed] = useState(false);
+  const { theme, toggleTheme, setTourOpen, setCommandPaletteOpen, sidebarCollapsed: collapsed } = useApp();
 
   const practiceNav = [
     { name: 'Overview', href: '/', icon: Gauge, dataTour: 'overview' },
@@ -83,7 +80,7 @@ export default function Sidebar() {
             <>
               <span className="flex-1 text-left truncate">Search claims</span>
               <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border border-border/80 bg-muted px-1.5 font-mono text-[9px] font-medium text-muted-foreground">
-                ⌘K
+                ⌘ K
               </kbd>
             </>
           )}
@@ -248,10 +245,11 @@ export default function Sidebar() {
 
         <button
           onClick={toggleTheme}
+          aria-label="Change theme"
           className="p-1.5 rounded-md hover:bg-sidebar-accent text-muted-foreground hover:text-sidebar-foreground transition-colors cursor-pointer"
-          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} mode`}
+          title="Change theme"
         >
-          {theme === 'light' ? <Moon className="size-4" /> : <Moon className="size-4" />}
+          {theme === 'light' ? <Sun className="size-4" /> : <Moon className="size-4" />}
         </button>
       </div>
     </aside>
