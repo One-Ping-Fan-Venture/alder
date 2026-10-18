@@ -183,18 +183,18 @@ export default function Sidebar() {
             {!collapsed && <span className="truncate">Developers</span>}
           </Link>
 
-          <a
-            href="https://docs.taigabilling.com"
-            target="_blank"
-            rel="noreferrer"
-            className={`peer/menu-button group/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-1.5 text-left h-8 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors duration-150 ${
-              collapsed ? 'justify-center px-0' : ''
-            }`}
+          <Link
+            href="/help"
+            className={`peer/menu-button group/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-1.5 text-left h-8 text-sm transition-colors duration-150 ${
+              pathname === '/help'
+                ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+            } ${collapsed ? 'justify-center px-0' : ''}`}
             title="Help center"
           >
             <HelpCircle className="size-4 shrink-0 text-muted-foreground" />
             {!collapsed && <span className="truncate">Help center</span>}
-          </a>
+          </Link>
 
           <Link
             href="/tickets"
