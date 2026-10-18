@@ -156,7 +156,7 @@ export interface Remit {
   payeeNpi: string;
   claimsCount: number;
   reconciliation: 'Reconciled' | 'Unreconciled';
-  postingStatus: 'Posted' | 'Pending';
+  postingStatus: 'Posted' | 'Pending' | 'Snoozed';
   receivedDate: string;
   postedDate: string;
 }

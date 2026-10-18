@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
+import { appPath } from '@/lib/path';
 import {
   Gauge,
   UserRound,
@@ -26,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function Sidebar() {
-  const pathname = usePathname();
+  const pathname = appPath(usePathname());
   const router = useRouter();
   const { theme, toggleTheme, setTourOpen, setCommandPaletteOpen, sidebarCollapsed: collapsed, signOut } = useApp();
 

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { appPath } from '@/lib/path';
 import {
   Gauge,
   FileText,
@@ -41,7 +42,7 @@ const moreLinks = [
 ];
 
 export default function MobileNav() {
-  const pathname = usePathname();
+  const pathname = appPath(usePathname());
   const [moreOpen, setMoreOpen] = useState(false);
 
   const itemClass = (active: boolean) =>

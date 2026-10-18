@@ -76,7 +76,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. Unsigned vi
 
 ### Demo account
 
-Sign-in is a local check against one account. The same username and password are printed on the form.
+The public site asks the browser for this account before any page loads. The in-app form uses the same account. The password is not printed on the form.
 
 | Field | Value |
 | --- | --- |
