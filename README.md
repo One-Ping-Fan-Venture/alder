@@ -92,6 +92,12 @@ npm run build
 npm start
 ```
 
+### Branches
+
+`develop` is the default branch. New clones and new pull requests start there. Day-to-day work branches from `develop` and opens pull requests back into `develop`.
+
+`main` is the production branch. The host builds production from `main`. Release by opening a pull request from `develop` into `main` and merging it. That push is what deploys.
+
 ---
 
 ## 📁 Repository Structure
