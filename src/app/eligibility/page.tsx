@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { easternISODate } from '@/lib/eastern';
 import {
   ShieldCheck,
-  Calendar,
   ChevronDown,
   CheckCircle2,
   AlertCircle,
@@ -165,16 +164,13 @@ export default function EligibilityPage() {
                   <label className="text-xs font-medium text-foreground">
                     Date of service <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative flex items-center">
-                    <Calendar className="size-4 absolute left-3 text-muted-foreground pointer-events-none" />
-                    <input
-                      type="date"
-                      value={dateOfService}
-                      onChange={(e) => setDateOfService(e.target.value)}
-                      required
-                      className="w-full rounded-lg border border-border/80 bg-secondary/40 pl-9 pr-3 py-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
-                    />
-                  </div>
+                  <input
+                    type="date"
+                    value={dateOfService}
+                    onChange={(e) => setDateOfService(e.target.value)}
+                    required
+                    className="w-full min-w-44 rounded-lg border border-border/80 bg-secondary/40 px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
+                  />
                 </div>
 
                 <div className="space-y-1.5">
